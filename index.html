@@ -355,6 +355,19 @@
             <p class="subtitle">오늘의 완벽한 데이트를 만들어보세요!</p>
 
             <div class="section">
+                <div class="section-title">💕 함께한 시간</div>
+                <div id="ddayInfo" style="background: linear-gradient(135deg, #fff5f7 0%, #ffe5ec 100%); padding: 15px; border-radius: 12px; margin-bottom: 10px;">
+                    <div style="text-align: center; font-size: 18px; font-weight: bold; color: #ff6b9d; margin-bottom: 8px;" id="ddayText">D+0</div>
+                    <div style="font-size: 13px; color: #666; text-align: center; line-height: 1.6;">
+                        <div>📅 <strong>200일</strong> - 11월 29일 (토)</div>
+                        <div>🎉 <strong>1주년</strong> - 2026년 5월 14일 (목)</div>
+                        <div>💝 <strong>400일</strong> - 2026년 6월 17일 (수)</div>
+                        <div>🌟 <strong>500일</strong> - 2026년 9월 25일 (금)</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
                 <div class="section-title">☀️ 날씨</div>
                 <div class="button-group">
                     <button class="option-btn" onclick="selectWeather('맑음')">☀️ 맑음</button>
@@ -376,13 +389,27 @@
             </div>
 
             <div class="section">
-                <div class="section-title">💪 텐션</div>
+                <div class="section-title">💪 오늘 컨디션</div>
                 <div class="button-group">
                     <button class="option-btn" onclick="selectVibe('완전여유')">🛋️ 완전여유</button>
                     <button class="option-btn" onclick="selectVibe('여유')">😌 여유</button>
                     <button class="option-btn" onclick="selectVibe('보통')">😊 보통</button>
                     <button class="option-btn" onclick="selectVibe('활동적')">💪 활동적</button>
                     <button class="option-btn" onclick="selectVibe('완전빡세')">🔥 완전빡세</button>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">🎉 특별한 날 (선택)</div>
+                <div class="button-group">
+                    <button class="option-btn" onclick="selectSpecialDay('생일')">🎂 생일</button>
+                    <button class="option-btn" onclick="selectSpecialDay('기념일')">💝 기념일</button>
+                    <button class="option-btn" onclick="selectSpecialDay('발렌타인데이')">💗 발렌타인데이</button>
+                    <button class="option-btn" onclick="selectSpecialDay('화이트데이')">🤍 화이트데이</button>
+                    <button class="option-btn" onclick="selectSpecialDay('크리스마스')">🎄 크리스마스</button>
+                    <button class="option-btn" onclick="selectSpecialDay('100일')">💯 100일</button>
+                    <button class="option-btn" onclick="selectSpecialDay('빼빼로데이')">🍫 빼빼로데이</button>
+                    <button class="option-btn" onclick="selectSpecialDay('할로윈')">🎃 할로윈</button>
                 </div>
             </div>
 
@@ -403,12 +430,29 @@
                         <div class="timeline-item">
                             <div class="timeline-dot">🌤️</div>
                             <div class="timeline-content">
-                                <div class="timeline-label">날씨 & 텐션</div>
+                                <div class="timeline-label">날씨 & 컨디션</div>
                                 <div class="timeline-value">
                                     <span id="summaryWeather">-</span> / 
                                     <span id="summaryTemp">-</span> / 
                                     <span id="summaryVibe">-</span>
                                 </div>
+                            </div>
+                        </div>
+
+                        <div class="timeline-item" id="specialDayDisplay" style="display:none;">
+                            <div class="timeline-dot">🎉</div>
+                            <div class="timeline-content">
+                                <div class="timeline-label">특별한 날</div>
+                                <div class="timeline-value" id="summarySpecialDay">-</div>
+                            </div>
+                        </div>
+
+                        <div class="timeline-item">
+                            <div class="timeline-dot">🎯</div>
+                            <div class="timeline-content">
+                                <div class="timeline-label">오늘의 커플 미션</div>
+                                <div class="timeline-value" id="summaryMission">?</div>
+                                <button class="mini-btn" onclick="randomMission()">🔄</button>
                             </div>
                         </div>
 
@@ -463,8 +507,7 @@
                         <div class="timeline-item">
                             <div class="timeline-dot">💕</div>
                             <div class="timeline-content">
-                                <div class="timeline-label">21:00~22:00 헤어짐</div>
-                                <div class="timeline-value">좋은 하루 보내세요!</div>
+                                <div class="timeline-label">22:00 헤어짐</div>
                             </div>
                         </div>
                     </div>
@@ -473,6 +516,7 @@
 
             <div class="button-container">
                 <button class="start-btn pink" id="randomAllBtn" onclick="randomAll()">🎲 데이트 코스 한번에 뽑기!</button>
+                <button class="start-btn hidden" id="shareBtn" onclick="shareResult()" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">📤 공유하기</button>
                 <button class="start-btn hidden" id="resetBtn" onclick="resetAll()">🔄 처음으로</button>
                 <button class="start-btn hidden pink" id="rerollBtn" onclick="rerollAll()">🎰 다시 뽑기</button>
             </div>
@@ -483,6 +527,7 @@
         let selectedWeather = '';
         let selectedTemp = '';
         let selectedVibe = '';
+        let selectedSpecialDay = '없음';
         let selectedLocation = '';
         let selectedStation = '';
 
@@ -492,6 +537,7 @@
         let pickedAfternoon = false;
         let pickedDinner = false;
         let pickedNight = false;
+        let pickedMission = false;
 
         let usedDays = [];
         let usedLocations = [];
@@ -499,6 +545,7 @@
         let usedAfternoonActivities = [];
         let usedDinnerMenus = [];
         let usedNightActivities = [];
+        let selectedAfternoonActivity = '';
 
         const days = ['월요일', '화요일', '수요일', '목요일', '금요일', '토요일', '일요일'];
         const locations = ['홍대', '신촌', '건대', '혜화/대학로', '성신여대', '왕십리', '노원', '수유', '연신내', '상수', '망원'];
@@ -529,8 +576,12 @@
                 '버거': ['수제버거집', '버거킹', '맘스터치', '크라제버거'],
                 '삼겹살': ['대패집', '무한갈비', '구이가', '연탄집'],
                 '곱창': ['홍대곱창', '막창이야기', '엽기곱창', '곱창이'],
-                '회': ['노량진수산', '스시효', '광어마을', '제주은갈치'],
-                '고기': ['숯불갈비', '소금구이', '한우마을', '등심집']
+                '회/초밥': ['광어회', '연어회', '모둠회', '오마카세'],
+                '고기': ['숯불갈비', '소금구이', '한우마을', '등심집'],
+                '해산물': ['대하구이', '킹크랩', '랍스터', '관자구이'],
+                '구이': ['조개구이', '굴구이', '새우구이', '전복구이'],
+                '해물찜': ['대게찜', '아귀찜', '해물탕', '낙지볶음'],
+                '장어': ['장어구이', '민물장어', '바다장어', '장어덮밥']
             },
             '신촌': {
                 '한식': ['신촌설렁탕', '국밥집', '돼지국밥', '순두부백반'],
@@ -540,7 +591,15 @@
                 '분식': ['신전떡볶이', '죠스떡볶이', '엽기떡볶이', '국대떡볶이'],
                 '치킨': ['교촌치킨', '네네치킨', 'BBQ', 'BHC'],
                 '피자': ['피자스쿨', '도미노피자', '피자헛', '미스터피자'],
-                '버거': ['버거킹', '맘스터치', '롯데리아', '크라제버거']
+                '버거': ['버거킹', '맘스터치', '롯데리아', '크라제버거'],
+                '삼겹살': ['대패집', '무한갈비', '구이가', '연탄집'],
+                '곱창': ['신촌곱창', '막창이야기', '엽기곱창', '곱창이'],
+                '회/초밥': ['광어회', '연어회', '모둠회', '스시'],
+                '고기': ['숯불갈비', '소금구이', '한우마을', '등심집'],
+                '해산물': ['대하구이', '킹크랩', '랍스터', '관자구이'],
+                '구이': ['조개구이', '굴구이', '새우구이', '전복구이'],
+                '해물찜': ['대게찜', '아귀찜', '해물탕', '해물파전'],
+                '장어': ['장어구이', '민물장어', '바다장어', '장어덮밥']
             },
             '건대': {
                 '한식': ['건대쭈꾸미', '국밥집', '삼겹살', '된장찌개'],
@@ -550,7 +609,15 @@
                 '분식': ['신전떡볶이', '엽기떡볶이', '죠스떡볶이', '국대떡볶이'],
                 '치킨': ['교촌치킨', 'BBQ', 'BHC', '네네치킨'],
                 '피자': ['피자스쿨', '피자헛', '도미노피자', '파파존스'],
-                '버거': ['버거킹', '맘스터치', '크라제버거', '수제버거']
+                '버거': ['버거킹', '맘스터치', '크라제버거', '수제버거'],
+                '삼겹살': ['대패집', '무한갈비', '구이가', '연탄집'],
+                '곱창': ['건대곱창', '막창이야기', '엽기곱창', '곱창이'],
+                '회/초밥': ['광어회', '연어회', '모둠회', '스시'],
+                '고기': ['숯불갈비', '소금구이', '한우마을', '등심집'],
+                '해산물': ['대하구이', '킹크랩', '랍스터', '관자구이'],
+                '구이': ['조개구이', '굴구이', '새우구이', '전복구이'],
+                '해물찜': ['대게찜', '아귀찜', '해물탕', '낙지볶음'],
+                '장어': ['장어구이', '민물장어', '바다장어', '장어덮밥']
             },
             '혜화/대학로': {
                 '한식': ['대학로국밥', '한정식', '쌈밥집', '순두부'],
@@ -560,7 +627,15 @@
                 '분식': ['신전떡볶이', '엽기떡볶이', '죠스떡볶이', '김밥천국'],
                 '치킨': ['교촌치킨', 'BBQ', 'BHC', '네네치킨'],
                 '피자': ['피자스쿨', '피자헛', '도미노피자', '미스터피자'],
-                '버거': ['버거킹', '맘스터치', '크라제버거', '수제버거']
+                '버거': ['버거킹', '맘스터치', '크라제버거', '수제버거'],
+                '삼겹살': ['대패집', '무한갈비', '구이가', '연탄집'],
+                '곱창': ['대학로곱창', '막창이야기', '엽기곱창', '곱창이'],
+                '회/초밥': ['광어회', '연어회', '모둠회', '스시'],
+                '고기': ['숯불갈비', '소금구이', '한우마을', '등심집'],
+                '해산물': ['대하구이', '킹크랩', '랍스터', '관자구이'],
+                '구이': ['조개구이', '굴구이', '새우구이', '전복구이'],
+                '해물찜': ['대게찜', '아귀찜', '해물탕', '낙지볶음'],
+                '장어': ['장어구이', '민물장어', '바다장어', '장어덮밥']
             },
             '성신여대': {
                 '한식': ['성신쭈꾸미', '국밥집', '삼겹살', '김치찌개'],
@@ -570,7 +645,15 @@
                 '분식': ['신전떡볶이', '엽기떡볶이', '죠스떡볶이', '국대떡볶이'],
                 '치킨': ['교촌치킨', 'BBQ', 'BHC', '네네치킨'],
                 '피자': ['피자스쿨', '피자헛', '도미노피자', '미스터피자'],
-                '버거': ['버거킹', '맘스터치', '크라제버거', '롯데리아']
+                '버거': ['버거킹', '맘스터치', '크라제버거', '롯데리아'],
+                '삼겹살': ['대패집', '무한갈비', '구이가', '연탄집'],
+                '곱창': ['성신여대곱창', '막창이야기', '엽기곱창', '곱창이'],
+                '회/초밥': ['광어회', '연어회', '모둠회', '스시'],
+                '고기': ['숯불갈비', '소금구이', '한우마을', '등심집'],
+                '해산물': ['대하구이', '킹크랩', '랍스터', '관자구이'],
+                '구이': ['조개구이', '굴구이', '새우구이', '전복구이'],
+                '해물찜': ['대게찜', '아귀찜', '해물탕', '낙지볶음'],
+                '장어': ['장어구이', '민물장어', '바다장어', '장어덮밥']
             },
             '왕십리': {
                 '한식': ['왕십리곱창', '국밥집', '삼겹살', '쭈꾸미'],
@@ -580,7 +663,15 @@
                 '분식': ['신전떡볶이', '엽기떡볶이', '죠스떡볶이', '김밥천국'],
                 '치킨': ['교촌치킨', 'BBQ', 'BHC', '네네치킨'],
                 '피자': ['피자스쿨', '피자헛', '도미노피자', '미스터피자'],
-                '버거': ['버거킹', '맘스터치', '크라제버거', '수제버거']
+                '버거': ['버거킹', '맘스터치', '크라제버거', '수제버거'],
+                '삼겹살': ['대패집', '무한갈비', '구이가', '연탄집'],
+                '곱창': ['왕십리곱창', '막창이야기', '엽기곱창', '곱창이'],
+                '회/초밥': ['광어회', '연어회', '모둠회', '스시'],
+                '고기': ['숯불갈비', '소금구이', '한우마을', '등심집'],
+                '해산물': ['대하구이', '킹크랩', '랍스터', '관자구이'],
+                '구이': ['조개구이', '굴구이', '새우구이', '전복구이'],
+                '해물찜': ['대게찜', '아귀찜', '해물탕', '낙지볶음'],
+                '장어': ['장어구이', '민물장어', '바다장어', '장어덮밥']
             },
             '노원': {
                 '한식': ['노원국밥', '삼겹살', '김치찌개', '순두부'],
@@ -590,7 +681,15 @@
                 '분식': ['신전떡볶이', '엽기떡볶이', '죠스떡볶이', '국대떡볶이'],
                 '치킨': ['교촌치킨', 'BBQ', 'BHC', '네네치킨'],
                 '피자': ['피자스쿨', '피자헛', '도미노피자', '미스터피자'],
-                '버거': ['버거킹', '맘스터치', '크라제버거', '롯데리아']
+                '버거': ['버거킹', '맘스터치', '크라제버거', '롯데리아'],
+                '삼겹살': ['대패집', '무한갈비', '구이가', '연탄집'],
+                '곱창': ['노원곱창', '막창이야기', '엽기곱창', '곱창이'],
+                '회/초밥': ['광어회', '연어회', '모둠회', '스시'],
+                '고기': ['숯불갈비', '소금구이', '한우마을', '등심집'],
+                '해산물': ['대하구이', '킹크랩', '랍스터', '관자구이'],
+                '구이': ['조개구이', '굴구이', '새우구이', '전복구이'],
+                '해물찜': ['대게찜', '아귀찜', '해물탕', '낙지볶음'],
+                '장어': ['장어구이', '민물장어', '바다장어', '장어덮밥']
             },
             '수유': {
                 '한식': ['수유국밥', '삼겹살', '김치찌개', '쭈꾸미'],
@@ -600,7 +699,15 @@
                 '분식': ['신전떡볶이', '엽기떡볶이', '죠스떡볶이', '김밥천국'],
                 '치킨': ['교촌치킨', 'BBQ', 'BHC', '네네치킨'],
                 '피자': ['피자스쿨', '피자헛', '도미노피자', '미스터피자'],
-                '버거': ['버거킹', '맘스터치', '크라제버거', '수제버거']
+                '버거': ['버거킹', '맘스터치', '크라제버거', '수제버거'],
+                '삼겹살': ['대패집', '무한갈비', '구이가', '연탄집'],
+                '곱창': ['수유곱창', '막창이야기', '엽기곱창', '곱창이'],
+                '회/초밥': ['광어회', '연어회', '모둠회', '스시'],
+                '고기': ['숯불갈비', '소금구이', '한우마을', '등심집'],
+                '해산물': ['대하구이', '킹크랩', '랍스터', '관자구이'],
+                '구이': ['조개구이', '굴구이', '새우구이', '전복구이'],
+                '해물찜': ['대게찜', '아귀찜', '해물탕', '낙지볶음'],
+                '장어': ['장어구이', '민물장어', '바다장어', '장어덮밥']
             },
             '연신내': {
                 '한식': ['연신내국밥', '삼겹살', '김치찌개', '쭈꾸미'],
@@ -610,7 +717,15 @@
                 '분식': ['신전떡볶이', '엽기떡볶이', '죠스떡볶이', '김밥천국'],
                 '치킨': ['교촌치킨', 'BBQ', 'BHC', '네네치킨'],
                 '피자': ['피자스쿨', '피자헛', '도미노피자', '미스터피자'],
-                '버거': ['버거킹', '맘스터치', '크라제버거', '롯데리아']
+                '버거': ['버거킹', '맘스터치', '크라제버거', '롯데리아'],
+                '삼겹살': ['대패집', '무한갈비', '구이가', '연탄집'],
+                '곱창': ['연신내곱창', '막창이야기', '엽기곱창', '곱창이'],
+                '회/초밥': ['광어회', '연어회', '모둠회', '스시'],
+                '고기': ['숯불갈비', '소금구이', '한우마을', '등심집'],
+                '해산물': ['대하구이', '킹크랩', '랍스터', '관자구이'],
+                '구이': ['조개구이', '굴구이', '새우구이', '전복구이'],
+                '해물찜': ['대게찜', '아귀찜', '해물탕', '낙지볶음'],
+                '장어': ['장어구이', '민물장어', '바다장어', '장어덮밥']
             },
             '상수': {
                 '한식': ['상수쭈꾸미', '국밥', '삼겹살', '김치찌개'],
@@ -620,7 +735,15 @@
                 '분식': ['신전떡볶이', '엽기떡볶이', '죠스떡볶이', '국대떡볶이'],
                 '치킨': ['교촌치킨', 'BBQ', 'BHC', '네네치킨'],
                 '피자': ['피자스쿨', '피자헛', '도미노피자', '미스터피자'],
-                '버거': ['버거킹', '맘스터치', '크라제버거', '수제버거']
+                '버거': ['버거킹', '맘스터치', '크라제버거', '수제버거'],
+                '삼겹살': ['대패집', '무한갈비', '구이가', '연탄집'],
+                '곱창': ['상수곱창', '막창이야기', '엽기곱창', '곱창이'],
+                '회/초밥': ['광어회', '연어회', '모둠회', '스시'],
+                '고기': ['숯불갈비', '소금구이', '한우마을', '등심집'],
+                '해산물': ['대하구이', '킹크랩', '랍스터', '관자구이'],
+                '구이': ['조개구이', '굴구이', '새우구이', '전복구이'],
+                '해물찜': ['대게찜', '아귀찜', '해물탕', '낙지볶음'],
+                '장어': ['장어구이', '민물장어', '바다장어', '장어덮밥']
             },
             '망원': {
                 '한식': ['망원동고기', '국밥', '삼겹살', '김치찌개'],
@@ -630,7 +753,15 @@
                 '분식': ['신전떡볶이', '엽기떡볶이', '죠스떡볶이', '국대떡볶이'],
                 '치킨': ['교촌치킨', 'BBQ', 'BHC', '네네치킨'],
                 '피자': ['피자스쿨', '피자헛', '도미노피자', '미스터피자'],
-                '버거': ['버거킹', '맘스터치', '크라제버거', '수제버거']
+                '버거': ['버거킹', '맘스터치', '크라제버거', '수제버거'],
+                '삼겹살': ['대패집', '무한갈비', '구이가', '연탄집'],
+                '곱창': ['망원곱창', '막창이야기', '엽기곱창', '곱창이'],
+                '회/초밥': ['광어회', '연어회', '모둠회', '스시'],
+                '고기': ['숯불갈비', '소금구이', '한우마을', '등심집'],
+                '해산물': ['대하구이', '킹크랩', '랍스터', '관자구이'],
+                '구이': ['조개구이', '굴구이', '새우구이', '전복구이'],
+                '해물찜': ['대게찜', '아귀찜', '해물탕', '낙지볶음'],
+                '장어': ['장어구이', '민물장어', '바다장어', '장어덮밥']
             }
         };
 
@@ -672,15 +803,58 @@
             }
         };
         
-        const lunchMenus = ['한식', '중식', '일식', '양식', '분식', '치킨', '피자', '버거'];
-        const dinnerMenus = ['한식', '중식', '일식', '양식', '치킨', '피자', '삼겹살', '곱창', '회', '고기'];
+        const coupleMissions = [
+            '서로 눈 마주치고 30초 이상 웃지 않기',
+            '오늘 하루 "사랑해" 10번 이상 말하기',
+            '상대방 손 꼭 잡고 5분 이상 걷기',
+            '셀카 3장 이상 찍기 (다양한 포즈로)',
+            '상대방 칭찬 5가지 말해주기',
+            '커플룩 아이템 하나 찾아서 함께 착용하기',
+            '서로에게 좋아하는 점 3가지 말하기',
+            '오늘 데이트 중 가장 행복했던 순간 공유하기',
+            '상대방이 좋아하는 음식 맞추기 게임',
+            '다음 데이트 때 하고 싶은 것 서로 말하기',
+            '손글씨로 사랑 메시지 적어서 교환하기',
+            '서로의 핸드폰 배경화면을 커플 사진으로 바꾸기',
+            '오늘 하루 상대방 별명으로만 부르기',
+            '길에서 하트 모양 찾아보기',
+            '상대방 손에 입맞춤 해주기',
+            '서로 안고 10초 세기',
+            '다음에 함께 가고 싶은 곳 3곳 이야기하기',
+            '오늘 데이트 중 가장 웃겼던 순간 공유하기',
+            '서로에게 "고마워" 5번 이상 말하기',
+            '서로의 좋아하는 노래 들려주기',
+            '상대방 이름으로 삼행시 짓기',
+            '서로의 첫인상 이야기하기',
+            '10년 후 우리 모습 상상해서 말하기',
+            '서로에게 편지 쓰는 시간 갖기 (5분)',
+            '상대방 매력 포인트 3가지 찾기',
+            '오늘 하루 스킨십 20회 이상 하기',
+            '상대방이 좋아할 만한 선물 3가지 맞추기',
+            '서로의 버킷리스트 1개씩 공유하기',
+            '걸으면서 어깨동무 하기',
+            '서로 사진 10장씩 찍어주기',
+            '상대방 흉내내기 (말투, 행동)',
+            '다음 기념일에 하고 싶은 것 계획하기',
+            '서로 마사지 3분씩 해주기',
+            '오늘 하루 "예쁘다/멋있다" 5번 이상 말하기',
+            '서로의 꿈 이야기 나누기',
+            '발 맞춰서 10분 이상 걷기',
+            '상대방 손바닥에 하트 그려주기',
+            '재밌는 춤 함께 따라하기',
+            '서로 이상형 다시 확인하기',
+            '오늘 데이트 별점 주고 이유 말하기'
+        ];
+
+        const lunchMenus = ['한식', '중식', '일식', '양식', '분식', '치킨', '피자', '버거', '해산물', '회/초밥', '구이'];
+        const dinnerMenus = ['한식', '중식', '일식', '양식', '치킨', '피자', '삼겹살', '곱창', '회/초밥', '고기', '해산물', '구이', '해물찜', '장어'];
 
         let afternoonActivities = [];
         let nightActivities = [];
 
         function selectWeather(weather) {
             selectedWeather = weather;
-            const buttons = document.querySelectorAll('.section')[0].querySelectorAll('.option-btn');
+            const buttons = document.querySelectorAll('.section')[1].querySelectorAll('.option-btn');
             buttons.forEach(btn => btn.classList.remove('active'));
             event.target.classList.add('active');
             updateActivities();
@@ -688,7 +862,7 @@
 
         function selectTemp(temp) {
             selectedTemp = temp;
-            const buttons = document.querySelectorAll('.section')[1].querySelectorAll('.option-btn');
+            const buttons = document.querySelectorAll('.section')[2].querySelectorAll('.option-btn');
             buttons.forEach(btn => btn.classList.remove('active'));
             event.target.classList.add('active');
             updateActivities();
@@ -696,9 +870,105 @@
 
         function selectVibe(vibe) {
             selectedVibe = vibe;
-            const buttons = document.querySelectorAll('.section')[2].querySelectorAll('.option-btn');
+            const buttons = document.querySelectorAll('.section')[3].querySelectorAll('.option-btn');
             buttons.forEach(btn => btn.classList.remove('active'));
             event.target.classList.add('active');
+        }
+
+        function selectSpecialDay(day) {
+            if (selectedSpecialDay === day) {
+                selectedSpecialDay = '없음';
+                const buttons = document.querySelectorAll('.section')[4].querySelectorAll('.option-btn');
+                buttons.forEach(btn => btn.classList.remove('active'));
+            } else {
+                selectedSpecialDay = day;
+                const buttons = document.querySelectorAll('.section')[4].querySelectorAll('.option-btn');
+                buttons.forEach(btn => btn.classList.remove('active'));
+                event.target.classList.add('active');
+            }
+        }
+
+        function calculateDday() {
+            const startDate = new Date('2025-05-14');
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            startDate.setHours(0, 0, 0, 0);
+            const diffTime = today - startDate;
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            
+            if (diffDays < 0) {
+                return `D${diffDays}`;
+            } else if (diffDays === 0) {
+                return 'D-Day 💕';
+            } else {
+                return `D+${diffDays}`;
+            }
+        }
+
+        function randomMission() {
+            if (pickedMission) return;
+            const mission = coupleMissions[Math.floor(Math.random() * coupleMissions.length)];
+            document.getElementById('summaryMission').textContent = mission;
+            animateValue('summaryMission');
+            pickedMission = true;
+            const btn = document.querySelector('[onclick="randomMission()"]');
+            if (btn) btn.style.display = 'none';
+            return mission;
+        }
+
+        function shareResult() {
+            const weather = document.getElementById('summaryWeather').textContent;
+            const temp = document.getElementById('summaryTemp').textContent;
+            const vibe = document.getElementById('summaryVibe').textContent;
+            const day = document.getElementById('summaryDay').textContent;
+            const location = document.getElementById('summaryLocation').textContent;
+            const lunch = document.getElementById('summaryLunch').textContent;
+            const afternoon = document.getElementById('summaryAfternoon').textContent;
+            const dinner = document.getElementById('summaryDinner').textContent;
+            const night = document.getElementById('summaryNight').textContent;
+            const mission = document.getElementById('summaryMission').textContent;
+            
+            let specialDayText = '';
+            if (selectedSpecialDay !== '없음') {
+                specialDayText = `\n🎉 특별한 날: ${selectedSpecialDay}`;
+            }
+            
+            const shareText = `💕 주현이와의 데이트 코스 💕\n\n` +
+                `🌤️ 날씨/온도/컨디션: ${weather} / ${temp} / ${vibe}${specialDayText}\n` +
+                `🎯 커플 미션: ${mission}\n\n` +
+                `🕐 13:30 만남: ${day} • ${location}\n` +
+                `🍱 점심: ${lunch}\n` +
+                `☕ 오후활동: ${afternoon}\n` +
+                `🍽️ 저녁: ${dinner}\n` +
+                `🌙 밤활동: ${night}\n` +
+                `💕 22:00 헤어짐`;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: '💕 주현이와의 데이트 코스',
+                    text: shareText
+                }).catch(() => {
+                    copyToClipboard(shareText);
+                });
+            } else {
+                copyToClipboard(shareText);
+            }
+        }
+
+        function copyToClipboard(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                document.execCommand('copy');
+                alert('데이트 코스가 클립보드에 복사되었습니다! 💕');
+            } catch (err) {
+                alert('복사에 실패했습니다. 다시 시도해주세요.');
+            }
+            document.body.removeChild(textarea);
         }
 
         function updateActivities() {
@@ -707,8 +977,8 @@
             const indoorAfternoon = ['카페', '보드게임', '대실', 'PC방', '만화카페', '방탈출', '쇼핑', 'VR체험', '찜질방', '코인노래방'];
             const outdoorAfternoon = ['공원산책', '한강', '놀이공원', '동물원', '수족관', '전시회', '벼룩시장', '사진찍기', '드라이브'];
             
-            const indoorNight = ['노래방', '영화', '볼링', '당구', '술집', '보드게임', '클럽', 'PC방', '만화카페', '코인노래방'];
-            const outdoorNight = ['야경보기', '산책', '한강', '드라이브', '야시장', '루프탑'];
+            const indoorNight = ['카페', '바', '와인바', '술집', '코인노래방', '만화카페', '심야영화', 'DVD방', '포차'];
+            const outdoorNight = ['야경보기', '산책', '한강 야경', '루프탑', '야시장', '공원 산책'];
 
             if (selectedWeather === '비' || selectedWeather === '눈') {
                 afternoonActivities = indoorAfternoon;
@@ -726,14 +996,14 @@
                     !['놀이공원', '동물원', '벼룩시장', '공원산책'].includes(a)
                 );
                 nightActivities = nightActivities.filter(a => 
-                    !['야시장', '산책'].includes(a)
+                    !['야시장', '산책', '공원 산책'].includes(a)
                 );
             } else if (selectedTemp === '추움' || selectedTemp === '쌀쌀') {
                 afternoonActivities = afternoonActivities.filter(a => 
                     !['한강', '수족관', '야시장', '드라이브'].includes(a)
                 );
                 nightActivities = nightActivities.filter(a => 
-                    !['한강', '야시장', '루프탑'].includes(a)
+                    !['한강 야경', '야시장', '루프탑', '공원 산책'].includes(a)
                 );
             }
         }
@@ -773,6 +1043,7 @@
         function checkAllPicked() {
             if (pickedDay && pickedLocation && pickedLunch && pickedAfternoon && pickedDinner && pickedNight) {
                 document.getElementById('randomAllBtn').style.display = 'none';
+                document.getElementById('shareBtn').classList.remove('hidden');
                 document.getElementById('resetBtn').classList.remove('hidden');
                 document.getElementById('rerollBtn').classList.remove('hidden');
             }
@@ -780,7 +1051,7 @@
 
         function startRandom() {
             if (!selectedWeather || !selectedTemp || !selectedVibe) {
-                alert('모든 항목을 선택해주세요! 💕');
+                alert('날씨, 온도, 오늘 컨디션을 모두 선택해주세요! 💕');
                 return;
             }
 
@@ -790,6 +1061,11 @@
             document.getElementById('summaryWeather').textContent = selectedWeather;
             document.getElementById('summaryTemp').textContent = selectedTemp;
             document.getElementById('summaryVibe').textContent = selectedVibe;
+            
+            if (selectedSpecialDay !== '없음') {
+                document.getElementById('specialDayDisplay').style.display = '';
+                document.getElementById('summarySpecialDay').textContent = selectedSpecialDay;
+            }
         }
 
         function animateValue(elementId) {
@@ -863,6 +1139,7 @@
                 alert('더 이상 선택 가능한 오후 활동이 없습니다!');
                 return;
             }
+            selectedAfternoonActivity = activity;
             let result = activity;
             
             if (activity === '카페') {
@@ -888,7 +1165,18 @@
 
         function randomDinner() {
             if (pickedDinner) return;
-            const menuType = getRandomFromArray(dinnerMenus, usedDinnerMenus);
+            
+            let menuList = [...dinnerMenus];
+            
+            if (selectedSpecialDay !== '없음') {
+                const specialMenus = ['해산물', '회/초밥', '고기', '해물찜', '장어'];
+                const availableSpecial = specialMenus.filter(m => !usedDinnerMenus.includes(m));
+                if (availableSpecial.length > 0 && Math.random() < 0.7) {
+                    menuList = availableSpecial;
+                }
+            }
+            
+            const menuType = getRandomFromArray(menuList, usedDinnerMenus);
             if (!menuType) {
                 alert('더 이상 선택 가능한 저녁 메뉴가 없습니다!');
                 return;
@@ -912,13 +1200,27 @@
             
             let filteredNight = [...nightActivities];
             
+            if (selectedAfternoonActivity) {
+                filteredNight = filteredNight.filter(a => a !== selectedAfternoonActivity);
+            }
+            
+            if (selectedSpecialDay !== '없음') {
+                const romanticActivities = ['야경보기', '산책', '한강 야경', '루프탑', '바', '와인바', '카페'];
+                const availableRomantic = romanticActivities.filter(a => 
+                    filteredNight.includes(a) && !usedNightActivities.includes(a)
+                );
+                if (availableRomantic.length > 0 && Math.random() < 0.7) {
+                    filteredNight = availableRomantic;
+                }
+            }
+            
             if (selectedVibe === '완전여유' || selectedVibe === '여유') {
                 filteredNight = filteredNight.filter(a => 
-                    !['클럽', '볼링', 'PC방'].includes(a)
+                    !['포차', '야시장'].includes(a)
                 );
             } else if (selectedVibe === '활동적' || selectedVibe === '완전빡세') {
                 filteredNight = filteredNight.filter(a => 
-                    !['산책', '야경보기', '만화카페'].includes(a)
+                    !['산책', '야경보기', '만화카페', '공원 산책'].includes(a)
                 );
             }
             
@@ -942,11 +1244,27 @@
             const btn = document.querySelector('[onclick="randomNight()"]');
             if (btn) btn.style.display = 'none';
             checkAllPicked();
+            
+            setTimeout(() => {
+                const wrapper = document.querySelector('.timeline-wrapper');
+                if (wrapper) {
+                    wrapper.scrollTo({
+                        top: wrapper.scrollHeight,
+                        behavior: 'smooth'
+                    });
+                }
+            }, 100);
+            
             return activity;
         }
 
         function randomAll() {
             let delay = 0;
+            
+            if (!pickedMission) {
+                setTimeout(() => randomMission(), delay);
+                delay += 200;
+            }
             
             if (!pickedDay && !pickedLocation) {
                 setTimeout(() => {
@@ -977,6 +1295,7 @@
             
             setTimeout(() => {
                 document.getElementById('randomAllBtn').style.display = 'none';
+                document.getElementById('shareBtn').classList.remove('hidden');
                 document.getElementById('resetBtn').classList.remove('hidden');
                 document.getElementById('rerollBtn').classList.remove('hidden');
             }, delay + 200);
@@ -989,6 +1308,7 @@
             pickedAfternoon = false;
             pickedDinner = false;
             pickedNight = false;
+            pickedMission = false;
 
             usedDays = [];
             usedLocations = [];
@@ -996,6 +1316,7 @@
             usedAfternoonActivities = [];
             usedDinnerMenus = [];
             usedNightActivities = [];
+            selectedAfternoonActivity = '';
 
             document.getElementById('summaryDay').textContent = '?';
             document.getElementById('summaryLocation').textContent = '?';
@@ -1003,8 +1324,10 @@
             document.getElementById('summaryAfternoon').textContent = '?';
             document.getElementById('summaryDinner').textContent = '?';
             document.getElementById('summaryNight').textContent = '?';
+            document.getElementById('summaryMission').textContent = '?';
 
             document.getElementById('randomAllBtn').style.display = '';
+            document.getElementById('shareBtn').classList.add('hidden');
             document.getElementById('resetBtn').classList.add('hidden');
             document.getElementById('rerollBtn').classList.add('hidden');
 
@@ -1015,6 +1338,11 @@
         function resetAll() {
             location.reload();
         }
+
+        window.addEventListener('DOMContentLoaded', function() {
+            const dday = calculateDday();
+            document.getElementById('ddayText').textContent = dday;
+        });
     </script>
 </body>
 </html>

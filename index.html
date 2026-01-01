@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>💕 주현이와의 데이트 코스</title>
+    <title>포켓몬 챔피언스 배틀 가이드</title>
     <style>
         * {
             margin: 0;
@@ -12,1337 +12,776 @@
         }
 
         body {
-            font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
-            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
-            height: 100vh;
-            padding: 10px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
+            font-family: 'Malgun Gothic', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
         }
 
         .container {
-            background: white;
-            border-radius: 20px;
-            padding: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
-            max-width: 450px;
-            width: 100%;
-            height: 95vh;
-            max-height: 95vh;
-            animation: fadeIn 0.5s ease;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
+            max-width: 1400px;
+            margin: 0 auto;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        header {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+            text-align: center;
         }
 
         h1 {
-            text-align: center;
-            color: #ff6b9d;
-            font-size: 24px;
-            margin-bottom: 8px;
-            font-weight: bold;
-            flex-shrink: 0;
-        }
-
-        .subtitle {
-            text-align: center;
-            color: #999;
-            font-size: 13px;
-            margin-bottom: 20px;
-            flex-shrink: 0;
-        }
-
-        #settingsScreen {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            overflow-y: auto;
-            overflow-x: hidden;
-        }
-
-        #randomScreen {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-        }
-
-        .screen-header {
-            flex-shrink: 0;
-        }
-
-        .button-container {
-            flex-shrink: 0;
-            padding-top: 10px;
-        }
-
-        .section {
-            margin-bottom: 18px;
-            flex-shrink: 0;
-        }
-
-        .section-title {
-            font-size: 15px;
-            color: #333;
+            color: #667eea;
+            font-size: 2.5em;
             margin-bottom: 10px;
-            font-weight: bold;
         }
 
-        .button-group {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(85px, 1fr));
-            gap: 8px;
-        }
-
-        .option-btn {
-            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
-            border: none;
-            padding: 10px 6px;
-            border-radius: 12px;
-            font-size: 13px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            color: #333;
-            font-weight: 600;
-            box-shadow: 0 4px 15px rgba(252, 182, 159, 0.3);
-        }
-
-        .option-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(252, 182, 159, 0.5);
-        }
-
-        .option-btn.active {
-            background: linear-gradient(135deg, #ff6b9d 0%, #ff8fab 100%);
-            color: white;
-            transform: scale(1.05);
-        }
-
-        .start-btn {
-            width: 100%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border: none;
-            padding: 16px;
-            border-radius: 15px;
-            font-size: 18px;
-            font-weight: bold;
-            color: white;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
-            margin-top: 8px;
-            flex-shrink: 0;
-        }
-
-        .start-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.5);
-        }
-
-        .start-btn.pink {
-            background: linear-gradient(135deg, #ff6b9d 0%, #ff8fab 100%);
-            box-shadow: 0 8px 25px rgba(255, 107, 157, 0.3);
-        }
-
-        .start-btn.pink:hover {
-            box-shadow: 0 10px 30px rgba(255, 107, 157, 0.5);
-        }
-
-        .timeline-wrapper {
-            flex: 1;
-            overflow-y: auto;
-            overflow-x: hidden;
-            padding-right: 5px;
-            min-height: 0;
-        }
-
-        .timeline-wrapper::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .timeline-wrapper::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 10px;
-        }
-
-        .timeline-wrapper::-webkit-scrollbar-thumb {
-            background: #ff6b9d;
-            border-radius: 10px;
-        }
-
-        .timeline-summary {
-            background: linear-gradient(135deg, #fff5f7 0%, #ffe5ec 100%);
-            padding: 15px;
-            border-radius: 15px;
-        }
-
-        .summary-title {
-            font-size: 18px;
-            color: #ff6b9d;
-            text-align: center;
-            margin-bottom: 20px;
-            font-weight: bold;
-        }
-
-        .timeline-container {
-            position: relative;
-            padding-left: 35px;
-        }
-
-        .timeline-container::before {
-            content: '';
-            position: absolute;
-            left: 13px;
-            top: 15px;
-            bottom: 15px;
-            width: 2px;
-            background: linear-gradient(180deg, #ff6b9d 0%, #ff8fab 100%);
-            border-radius: 2px;
-        }
-
-        .timeline-item {
-            position: relative;
-            margin-bottom: 15px;
-            animation: slideIn 0.5s ease;
-        }
-
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateX(-20px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-
-        .timeline-dot {
-            position: absolute;
-            left: -28px;
-            top: 3px;
-            width: 26px;
-            height: 26px;
+        .search-box {
             background: white;
-            border: 2px solid #ff6b9d;
-            border-radius: 50%;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.1em;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            outline: none;
+        }
+
+        .search-input:focus {
+            border-color: #f5576c;
+        }
+
+        .filter-buttons {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 8px 20px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s;
+        }
+
+        .filter-btn.active {
+            transform: scale(1.1);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+        }
+
+        .pokemon-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .pokemon-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: transform 0.3s;
+            position: relative;
+            padding-top: 50px;
+        }
+
+        .pokemon-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+
+        .pokemon-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .pokemon-name {
+            font-size: 1.8em;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .pokemon-number {
+            color: #999;
+            font-size: 1.2em;
+        }
+
+        .type-container {
+            margin: 15px 0;
+        }
+
+        .type {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 20px;
+            margin: 3px;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        .type.normal { background: #A8A878; }
+        .type.fire { background: #F08030; }
+        .type.water { background: #6890F0; }
+        .type.grass { background: #78C850; }
+        .type.electric { background: #F8D030; color: #333; }
+        .type.ice { background: #98D8D8; }
+        .type.fighting { background: #C03028; }
+        .type.poison { background: #A040A0; }
+        .type.ground { background: #E0C068; }
+        .type.flying { background: #A890F0; }
+        .type.psychic { background: #F85888; }
+        .type.bug { background: #A8B820; }
+        .type.rock { background: #B8A038; }
+        .type.ghost { background: #705898; }
+        .type.dragon { background: #7038F8; }
+        .type.dark { background: #705848; }
+        .type.steel { background: #B8B8D0; }
+        .type.fairy { background: #EE99AC; }
+
+        .stats-section {
+            margin: 15px 0;
+        }
+
+        .stat-row {
             display: flex;
             align-items: center;
-            justify-content: center;
-            font-size: 13px;
-            box-shadow: 0 2px 8px rgba(255, 107, 157, 0.3);
+            margin: 8px 0;
         }
 
-        .timeline-content {
-            background: white;
-            padding: 12px 14px;
+        .stat-name {
+            width: 80px;
+            font-weight: bold;
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .stat-bar-container {
+            flex: 1;
+            background: #f0f0f0;
+            height: 20px;
             border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-            transition: transform 0.3s ease;
+            overflow: hidden;
             position: relative;
         }
 
-        .timeline-label {
-            font-size: 11px;
-            color: #999;
-            margin-bottom: 4px;
+        .stat-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transition: width 0.5s;
         }
 
-        .timeline-value {
-            font-size: 15px;
-            color: #ff6b9d;
-            font-weight: bold;
-            transition: transform 0.3s ease;
-            padding-right: 35px;
-        }
-
-        .mini-btn {
+        .stat-value {
             position: absolute;
-            right: 10px;
+            right: 8px;
             top: 50%;
             transform: translateY(-50%);
-            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
-            border: none;
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 8px rgba(252, 182, 159, 0.3);
+            font-size: 0.85em;
+            font-weight: bold;
+            color: #333;
         }
 
-        .mini-btn:hover {
-            transform: translateY(-50%) scale(1.1);
-            box-shadow: 0 3px 12px rgba(252, 182, 159, 0.5);
+        .info-section {
+            margin: 15px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
         }
 
-        .mini-btn:active {
-            transform: translateY(-50%) scale(0.95);
+        .info-section h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.1em;
         }
 
-        .hidden {
-            display: none !important;
+        .info-item {
+            margin: 8px 0;
+            line-height: 1.6;
+        }
+
+        .info-label {
+            font-weight: bold;
+            color: #555;
+            display: inline-block;
+            min-width: 100px;
+        }
+
+        .ability-badge {
+            display: inline-block;
+            background: #764ba2;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 15px;
+            margin: 3px;
+            font-size: 0.85em;
+        }
+
+        .move {
+            display: inline-block;
+            background: #f5576c;
+            color: white;
+            padding: 6px 14px;
+            border-radius: 15px;
+            margin: 4px;
+            font-size: 0.9em;
+        }
+
+        .weakness, .resistance {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 15px;
+            margin: 3px;
+            font-size: 0.85em;
+        }
+
+        .weakness {
+            background: #ffebee;
+            color: #c62828;
+            border: 1px solid #c62828;
+        }
+
+        .resistance {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border: 1px solid #2e7d32;
+        }
+
+        .mega-badge {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        .ev-spread {
+            background: #fff3e0;
+            padding: 12px;
+            border-radius: 8px;
+            border-left: 4px solid #ff9800;
+            margin: 10px 0;
+        }
+
+        .tier-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: bold;
+            color: white;
+            font-size: 0.85em;
+            z-index: 10;
+        }
+
+        .tier-s { background: #d32f2f; }
+        .tier-a { background: #f57c00; }
+        .tier-b { background: #fbc02d; color: #333; }
+
+        .no-results {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 15px;
+            color: #999;
+            font-size: 1.3em;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            header {
+                padding: 20px 15px;
+            }
+
+            .pokemon-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .pokemon-card {
+                padding: 20px;
+                padding-top: 45px;
+            }
+
+            .pokemon-name {
+                font-size: 1.5em;
+            }
+
+            .pokemon-number {
+                font-size: 1em;
+            }
+
+            .search-box {
+                padding: 15px;
+            }
+
+            .filter-buttons {
+                justify-content: center;
+            }
+
+            .filter-btn {
+                font-size: 0.85em;
+                padding: 6px 14px;
+            }
+
+            .stat-name {
+                width: 60px;
+                font-size: 0.8em;
+            }
+
+            .stat-value {
+                font-size: 0.75em;
+            }
+
+            .info-section h3 {
+                font-size: 1em;
+            }
+
+            .move, .ability-badge, .type {
+                font-size: 0.8em;
+                padding: 5px 10px;
+            }
+
+            .tier-badge {
+                font-size: 0.75em;
+                padding: 5px 10px;
+                top: 10px;
+                right: 10px;
+            }
         }
 
         @media (max-width: 480px) {
-            body {
-                padding: 5px;
+            header h1 {
+                font-size: 1.5em;
             }
 
-            .container {
-                padding: 15px;
-                height: 98vh;
-                max-height: 98vh;
+            .pokemon-name {
+                font-size: 1.3em;
             }
 
-            h1 {
-                font-size: 22px;
-                margin-bottom: 5px;
+            .search-input {
+                font-size: 1em;
+                padding: 12px;
             }
 
-            .subtitle {
-                font-size: 12px;
-                margin-bottom: 15px;
+            .filter-btn {
+                font-size: 0.75em;
+                padding: 5px 10px;
             }
 
-            .section {
-                margin-bottom: 15px;
+            .stat-row {
+                margin: 5px 0;
             }
 
-            .section-title {
-                font-size: 14px;
-                margin-bottom: 8px;
-            }
-
-            .option-btn {
-                padding: 9px 5px;
-                font-size: 12px;
-            }
-
-            .start-btn {
-                padding: 14px;
-                font-size: 16px;
-            }
-
-            .timeline-dot {
-                width: 24px;
-                height: 24px;
-                left: -27px;
-                font-size: 12px;
-            }
-
-            .timeline-value {
-                font-size: 14px;
-                padding-right: 32px;
-            }
-
-            .mini-btn {
-                width: 26px;
-                height: 26px;
-                font-size: 13px;
+            .stat-bar-container {
+                height: 18px;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div id="settingsScreen">
-            <h1>💕 주현이와의 데이트 코스</h1>
-            <p class="subtitle">오늘의 완벽한 데이트를 만들어보세요!</p>
+        <header>
+            <h1>⚔️ 포켓몬 챔피언스 배틀 가이드</h1>
+            <p style="color: #666; margin-top: 10px;">실전 배틀 필수 정보</p>
+        </header>
 
-            <div class="section">
-                <div class="section-title">💕 함께한 시간</div>
-                <div id="ddayInfo" style="background: linear-gradient(135deg, #fff5f7 0%, #ffe5ec 100%); padding: 15px; border-radius: 12px; margin-bottom: 10px;">
-                    <div style="text-align: center; font-size: 18px; font-weight: bold; color: #ff6b9d; margin-bottom: 8px;" id="ddayText">D+0</div>
-                    <div style="font-size: 13px; color: #666; text-align: center; line-height: 1.6;">
-                        <div>📅 <strong>200일</strong> - 11월 29일 (토)</div>
-                        <div>🎉 <strong>1주년</strong> - 2026년 5월 14일 (목)</div>
-                        <div>💝 <strong>400일</strong> - 2026년 6월 17일 (수)</div>
-                        <div>🌟 <strong>500일</strong> - 2026년 9월 25일 (금)</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="section">
-                <div class="section-title">☀️ 날씨</div>
-                <div class="button-group">
-                    <button class="option-btn" onclick="selectWeather('맑음')">☀️ 맑음</button>
-                    <button class="option-btn" onclick="selectWeather('흐림')">☁️ 흐림</button>
-                    <button class="option-btn" onclick="selectWeather('비')">🌧️ 비</button>
-                    <button class="option-btn" onclick="selectWeather('눈')">❄️ 눈</button>
-                </div>
-            </div>
-
-            <div class="section">
-                <div class="section-title">🌡️ 온도</div>
-                <div class="button-group">
-                    <button class="option-btn" onclick="selectTemp('매우더움')">🔥 매우더움</button>
-                    <button class="option-btn" onclick="selectTemp('더움')">☀️ 더움</button>
-                    <button class="option-btn" onclick="selectTemp('적당')">🌸 적당</button>
-                    <button class="option-btn" onclick="selectTemp('쌀쌀')">🍂 쌀쌀</button>
-                    <button class="option-btn" onclick="selectTemp('추움')">❄️ 추움</button>
-                </div>
-            </div>
-
-            <div class="section">
-                <div class="section-title">💪 오늘 컨디션</div>
-                <div class="button-group">
-                    <button class="option-btn" onclick="selectVibe('완전여유')">🛋️ 완전여유</button>
-                    <button class="option-btn" onclick="selectVibe('여유')">😌 여유</button>
-                    <button class="option-btn" onclick="selectVibe('보통')">😊 보통</button>
-                    <button class="option-btn" onclick="selectVibe('활동적')">💪 활동적</button>
-                    <button class="option-btn" onclick="selectVibe('완전빡세')">🔥 완전빡세</button>
-                </div>
-            </div>
-
-            <div class="section">
-                <div class="section-title">🎉 특별한 날 (선택)</div>
-                <div class="button-group">
-                    <button class="option-btn" onclick="selectSpecialDay('생일')">🎂 생일</button>
-                    <button class="option-btn" onclick="selectSpecialDay('기념일')">💝 기념일</button>
-                    <button class="option-btn" onclick="selectSpecialDay('발렌타인데이')">💗 발렌타인데이</button>
-                    <button class="option-btn" onclick="selectSpecialDay('화이트데이')">🤍 화이트데이</button>
-                    <button class="option-btn" onclick="selectSpecialDay('크리스마스')">🎄 크리스마스</button>
-                    <button class="option-btn" onclick="selectSpecialDay('100일')">💯 100일</button>
-                    <button class="option-btn" onclick="selectSpecialDay('빼빼로데이')">🍫 빼빼로데이</button>
-                    <button class="option-btn" onclick="selectSpecialDay('할로윈')">🎃 할로윈</button>
-                </div>
-            </div>
-
-            <button class="start-btn" onclick="startRandom()">✨ 데이트 뽑기 시작!</button>
-        </div>
-
-        <div id="randomScreen" class="hidden">
-            <div class="screen-header">
-                <h1>💕 주현이와의 데이트코스</h1>
-                <p class="subtitle">버튼을 눌러 오늘의 데이트를 결정하세요!</p>
-            </div>
-
-            <div class="timeline-wrapper">
-                <div class="timeline-summary">
-                    <div class="summary-title">💝 오늘의 데이트 일정</div>
-                    
-                    <div class="timeline-container">
-                        <div class="timeline-item">
-                            <div class="timeline-dot">🌤️</div>
-                            <div class="timeline-content">
-                                <div class="timeline-label">날씨 & 컨디션</div>
-                                <div class="timeline-value">
-                                    <span id="summaryWeather">-</span> / 
-                                    <span id="summaryTemp">-</span> / 
-                                    <span id="summaryVibe">-</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="timeline-item" id="specialDayDisplay" style="display:none;">
-                            <div class="timeline-dot">🎉</div>
-                            <div class="timeline-content">
-                                <div class="timeline-label">특별한 날</div>
-                                <div class="timeline-value" id="summarySpecialDay">-</div>
-                            </div>
-                        </div>
-
-                        <div class="timeline-item">
-                            <div class="timeline-dot">🎯</div>
-                            <div class="timeline-content">
-                                <div class="timeline-label">오늘의 커플 미션</div>
-                                <div class="timeline-value" id="summaryMission">?</div>
-                                <button class="mini-btn" onclick="randomMission()">🔄</button>
-                            </div>
-                        </div>
-
-                        <div class="timeline-item">
-                            <div class="timeline-dot">🕐</div>
-                            <div class="timeline-content">
-                                <div class="timeline-label">13:30 만남</div>
-                                <div class="timeline-value">
-                                    <span id="summaryDay">?</span> • 
-                                    <span id="summaryLocation">?</span>
-                                </div>
-                                <button class="mini-btn" onclick="randomDay(); randomLocation();">🔄</button>
-                            </div>
-                        </div>
-
-                        <div class="timeline-item">
-                            <div class="timeline-dot">🍱</div>
-                            <div class="timeline-content">
-                                <div class="timeline-label">점심시간</div>
-                                <div class="timeline-value" id="summaryLunch">?</div>
-                                <button class="mini-btn" onclick="randomLunch()">🔄</button>
-                            </div>
-                        </div>
-
-                        <div class="timeline-item">
-                            <div class="timeline-dot">☕</div>
-                            <div class="timeline-content">
-                                <div class="timeline-label">오후활동</div>
-                                <div class="timeline-value" id="summaryAfternoon">?</div>
-                                <button class="mini-btn" onclick="randomAfternoon()">🔄</button>
-                            </div>
-                        </div>
-
-                        <div class="timeline-item">
-                            <div class="timeline-dot">🍽️</div>
-                            <div class="timeline-content">
-                                <div class="timeline-label">저녁식사</div>
-                                <div class="timeline-value" id="summaryDinner">?</div>
-                                <button class="mini-btn" onclick="randomDinner()">🔄</button>
-                            </div>
-                        </div>
-
-                        <div class="timeline-item">
-                            <div class="timeline-dot">🌙</div>
-                            <div class="timeline-content">
-                                <div class="timeline-label">밤활동</div>
-                                <div class="timeline-value" id="summaryNight">?</div>
-                                <button class="mini-btn" onclick="randomNight()">🔄</button>
-                            </div>
-                        </div>
-
-                        <div class="timeline-item">
-                            <div class="timeline-dot">💕</div>
-                            <div class="timeline-content">
-                                <div class="timeline-label">22:00 헤어짐</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="button-container">
-                <button class="start-btn pink" id="randomAllBtn" onclick="randomAll()">🎲 데이트 코스 한번에 뽑기!</button>
-                <button class="start-btn hidden" id="shareBtn" onclick="shareResult()" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">📤 공유하기</button>
-                <button class="start-btn hidden" id="resetBtn" onclick="resetAll()">🔄 처음으로</button>
-                <button class="start-btn hidden pink" id="rerollBtn" onclick="rerollAll()">🎰 다시 뽑기</button>
+        <div class="search-box">
+            <input type="text" id="searchInput" class="search-input" placeholder="포켓몬 이름을 검색하세요... (예: 리자몽, 개굴닌자)">
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-type="all" style="background: #667eea; color: white;">전체</button>
+                <button class="filter-btn type fire" data-type="불꽃">불꽃</button>
+                <button class="filter-btn type water" data-type="물">물</button>
+                <button class="filter-btn type grass" data-type="풀">풀</button>
+                <button class="filter-btn type electric" data-type="전기">전기</button>
+                <button class="filter-btn type dragon" data-type="드래곤">드래곤</button>
+                <button class="filter-btn type steel" data-type="강철">강철</button>
+                <button class="filter-btn type fairy" data-type="페어리">페어리</button>
+                <button class="filter-btn type psychic" data-type="에스퍼">에스퍼</button>
             </div>
         </div>
+
+        <div id="pokemonList" class="pokemon-grid"></div>
+        <div id="noResults" class="no-results" style="display: none;">검색 결과가 없습니다.</div>
     </div>
 
     <script>
-        let selectedWeather = '';
-        let selectedTemp = '';
-        let selectedVibe = '';
-        let selectedSpecialDay = '없음';
-        let selectedLocation = '';
-        let selectedStation = '';
-
-        let pickedDay = false;
-        let pickedLocation = false;
-        let pickedLunch = false;
-        let pickedAfternoon = false;
-        let pickedDinner = false;
-        let pickedNight = false;
-        let pickedMission = false;
-
-        let usedDays = [];
-        let usedLocations = [];
-        let usedLunchMenus = [];
-        let usedAfternoonActivities = [];
-        let usedDinnerMenus = [];
-        let usedNightActivities = [];
-        let selectedAfternoonActivity = '';
-
-        const days = ['월요일', '화요일', '수요일', '목요일', '금요일', '토요일', '일요일'];
-        const locations = ['홍대', '신촌', '건대', '혜화/대학로', '성신여대', '왕십리', '노원', '수유', '연신내', '상수', '망원'];
-        
-        const stationInfo = {
-            '홍대': ['홍대입구역 9번출구', '홍대입구역 5번출구', '상수역 1번출구', '합정역 7번출구'],
-            '신촌': ['신촌역 2번출구', '신촌역 3번출구', '이대역 2번출구', '이대역 3번출구'],
-            '건대': ['건대입구역 3번출구', '건대입구역 5번출구', '건대입구역 2번출구'],
-            '혜화/대학로': ['혜화역 2번출구', '혜화역 1번출구', '혜화역 4번출구'],
-            '성신여대': ['성신여대입구역 4번출구', '성신여대입구역 1번출구', '한성대입구역 6번출구'],
-            '왕십리': ['왕십리역 7번출구', '왕십리역 4번출구', '왕십리역 2번출구'],
-            '노원': ['노원역 1번출구', '노원역 3번출구', '상계역 1번출구'],
-            '수유': ['수유역 3번출구', '수유역 4번출구', '미아사거리역 2번출구'],
-            '연신내': ['연신내역 2번출구', '연신내역 6번출구', '역촌역 1번출구'],
-            '상수': ['상수역 1번출구', '상수역 2번출구', '합정역 1번출구'],
-            '망원': ['망원역 2번출구', '망원역 1번출구', '합정역 9번출구']
-        };
-
-        const restaurants = {
-            '홍대': {
-                '한식': ['명동칼국수', '진진바라', '맛있는녀석들삼겹살', '홍대개미'],
-                '중식': ['도원', '차이나팩토리', '홍콩반점0410', '미미네반점'],
-                '일식': ['스시효', '야끼니꾸', '돈키호테', '츠루동동'],
-                '양식': ['빕스', '애슐리', '파스토보이', '더플레이스'],
-                '분식': ['신전떡볶이', '엽기떡볶이', '죠스떡볶이', '국대떡볶이'],
-                '치킨': ['교촌치킨', 'BBQ', 'BHC', '또래오래'],
-                '피자': ['피자스쿨', '피자헛', '파파존스', '미스터피자'],
-                '버거': ['수제버거집', '버거킹', '맘스터치', '크라제버거'],
-                '삼겹살': ['대패집', '무한갈비', '구이가', '연탄집'],
-                '곱창': ['홍대곱창', '막창이야기', '엽기곱창', '곱창이'],
-                '회/초밥': ['광어회', '연어회', '모둠회', '오마카세'],
-                '고기': ['숯불갈비', '소금구이', '한우마을', '등심집'],
-                '해산물': ['대하구이', '킹크랩', '랍스터', '관자구이'],
-                '구이': ['조개구이', '굴구이', '새우구이', '전복구이'],
-                '해물찜': ['대게찜', '아귀찜', '해물탕', '낙지볶음'],
-                '장어': ['장어구이', '민물장어', '바다장어', '장어덮밥']
+        const pokemonData = [
+            {
+                name: "리자몽",
+                number: "006",
+                types: ["불꽃", "비행"],
+                tier: "S",
+                stats: { hp: 78, attack: 84, defense: 78, spAttack: 109, spDefense: 85, speed: 100 },
+                abilities: ["맹화", "선파워(숨)"],
+                nature: "수줍음/겁쟁이",
+                evSpread: "특공 32 / 스피드 32 / HP 2",
+                moves: ["오버히트", "에어슬래시", "용의파동", "태양광선"],
+                weaknesses: ["물", "전기", "바위"],
+                resistances: ["풀", "격투", "벌레", "강철"],
+                mega: true,
+                megaInfo: "메가 리자몽 X (불꽃/드래곤) / 메가 리자몽 Y (불꽃/비행)"
             },
-            '신촌': {
-                '한식': ['신촌설렁탕', '국밥집', '돼지국밥', '순두부백반'],
-                '중식': ['차이나팩토리', '홍콩반점', '중화루', '미미네'],
-                '일식': ['스시집', '돈카츠킹', '라멘야', '우동한그릇'],
-                '양식': ['투썸플레이스', '애슐리', '빕스', '파스타'],
-                '분식': ['신전떡볶이', '죠스떡볶이', '엽기떡볶이', '국대떡볶이'],
-                '치킨': ['교촌치킨', '네네치킨', 'BBQ', 'BHC'],
-                '피자': ['피자스쿨', '도미노피자', '피자헛', '미스터피자'],
-                '버거': ['버거킹', '맘스터치', '롯데리아', '크라제버거'],
-                '삼겹살': ['대패집', '무한갈비', '구이가', '연탄집'],
-                '곱창': ['신촌곱창', '막창이야기', '엽기곱창', '곱창이'],
-                '회/초밥': ['광어회', '연어회', '모둠회', '스시'],
-                '고기': ['숯불갈비', '소금구이', '한우마을', '등심집'],
-                '해산물': ['대하구이', '킹크랩', '랍스터', '관자구이'],
-                '구이': ['조개구이', '굴구이', '새우구이', '전복구이'],
-                '해물찜': ['대게찜', '아귀찜', '해물탕', '해물파전'],
-                '장어': ['장어구이', '민물장어', '바다장어', '장어덮밥']
+            {
+                name: "개굴닌자",
+                number: "658",
+                types: ["물", "악"],
+                tier: "S",
+                stats: { hp: 72, attack: 95, defense: 67, spAttack: 103, spDefense: 71, speed: 122 },
+                abilities: ["급류", "변환자재(숨)"],
+                nature: "겁쟁이/수줍음",
+                evSpread: "스피드 32 / 특공 32 / HP 2",
+                moves: ["하이드로펌프", "냉동빔", "악의파동", "풀묶기"],
+                weaknesses: ["전기", "풀", "격투", "벌레", "페어리"],
+                resistances: ["강철", "불꽃", "물", "얼음", "고스트", "악"],
+                mega: true,
+                megaInfo: "메가 개굴닌자 - 스피드 특화형"
             },
-            '건대': {
-                '한식': ['건대쭈꾸미', '국밥집', '삼겹살', '된장찌개'],
-                '중식': ['차이나팩토리', '짬뽕집', '짜장면집', '중화루'],
-                '일식': ['스시집', '돈카츠', '라멘', '우동'],
-                '양식': ['파스타집', '스테이크', '빕스', '애슐리'],
-                '분식': ['신전떡볶이', '엽기떡볶이', '죠스떡볶이', '국대떡볶이'],
-                '치킨': ['교촌치킨', 'BBQ', 'BHC', '네네치킨'],
-                '피자': ['피자스쿨', '피자헛', '도미노피자', '파파존스'],
-                '버거': ['버거킹', '맘스터치', '크라제버거', '수제버거'],
-                '삼겹살': ['대패집', '무한갈비', '구이가', '연탄집'],
-                '곱창': ['건대곱창', '막창이야기', '엽기곱창', '곱창이'],
-                '회/초밥': ['광어회', '연어회', '모둠회', '스시'],
-                '고기': ['숯불갈비', '소금구이', '한우마을', '등심집'],
-                '해산물': ['대하구이', '킹크랩', '랍스터', '관자구이'],
-                '구이': ['조개구이', '굴구이', '새우구이', '전복구이'],
-                '해물찜': ['대게찜', '아귀찜', '해물탕', '낙지볶음'],
-                '장어': ['장어구이', '민물장어', '바다장어', '장어덮밥']
+            {
+                name: "망나뇽",
+                number: "149",
+                types: ["드래곤", "비행"],
+                tier: "S",
+                stats: { hp: 91, attack: 134, defense: 95, spAttack: 100, spDefense: 100, speed: 80 },
+                abilities: ["정신력", "멀티스케일(숨)"],
+                nature: "고집/의젓함",
+                evSpread: "공격 32 / HP 20 / 스피드 14",
+                moves: ["역린", "지진", "신속", "불대문자"],
+                weaknesses: ["얼음", "드래곤", "페어리", "바위"],
+                resistances: ["풀", "격투", "벌레", "불꽃", "물"],
+                mega: false
             },
-            '혜화/대학로': {
-                '한식': ['대학로국밥', '한정식', '쌈밥집', '순두부'],
-                '중식': ['차이나팩토리', '짬뽕집', '중화루', '홍콩반점'],
-                '일식': ['스시집', '돈카츠', '라멘', '덮밥'],
-                '양식': ['파스타집', '스테이크', '리조또', '피자'],
-                '분식': ['신전떡볶이', '엽기떡볶이', '죠스떡볶이', '김밥천국'],
-                '치킨': ['교촌치킨', 'BBQ', 'BHC', '네네치킨'],
-                '피자': ['피자스쿨', '피자헛', '도미노피자', '미스터피자'],
-                '버거': ['버거킹', '맘스터치', '크라제버거', '수제버거'],
-                '삼겹살': ['대패집', '무한갈비', '구이가', '연탄집'],
-                '곱창': ['대학로곱창', '막창이야기', '엽기곱창', '곱창이'],
-                '회/초밥': ['광어회', '연어회', '모둠회', '스시'],
-                '고기': ['숯불갈비', '소금구이', '한우마을', '등심집'],
-                '해산물': ['대하구이', '킹크랩', '랍스터', '관자구이'],
-                '구이': ['조개구이', '굴구이', '새우구이', '전복구이'],
-                '해물찜': ['대게찜', '아귀찜', '해물탕', '낙지볶음'],
-                '장어': ['장어구이', '민물장어', '바다장어', '장어덮밥']
+            {
+                name: "킬가르도",
+                number: "681",
+                types: ["강철", "고스트"],
+                tier: "A",
+                stats: { hp: 60, attack: 50, defense: 140, spAttack: 50, spDefense: 140, speed: 60 },
+                abilities: ["배틀스위치"],
+                nature: "냉정/용감",
+                evSpread: "HP 32 / 공격 32 / 특공 2",
+                moves: ["킹실드", "섀도크로", "성스러운칼", "아이언헤드"],
+                weaknesses: ["불꽃", "땅", "고스트", "악"],
+                resistances: ["노말", "풀", "얼음", "비행", "에스퍼", "벌레", "바위", "드래곤", "강철", "페어리", "독"],
+                mega: false,
+                special: "폼 체인지: 공격 시 블레이드폼(공/특공 140), 방어 시 실드폼(방/특방 140)"
             },
-            '성신여대': {
-                '한식': ['성신쭈꾸미', '국밥집', '삼겹살', '김치찌개'],
-                '중식': ['차이나팩토리', '짬뽕집', '짜장면', '중화루'],
-                '일식': ['스시', '돈카츠', '라멘', '우동'],
-                '양식': ['파스타', '스테이크', '빕스', '피자'],
-                '분식': ['신전떡볶이', '엽기떡볶이', '죠스떡볶이', '국대떡볶이'],
-                '치킨': ['교촌치킨', 'BBQ', 'BHC', '네네치킨'],
-                '피자': ['피자스쿨', '피자헛', '도미노피자', '미스터피자'],
-                '버거': ['버거킹', '맘스터치', '크라제버거', '롯데리아'],
-                '삼겹살': ['대패집', '무한갈비', '구이가', '연탄집'],
-                '곱창': ['성신여대곱창', '막창이야기', '엽기곱창', '곱창이'],
-                '회/초밥': ['광어회', '연어회', '모둠회', '스시'],
-                '고기': ['숯불갈비', '소금구이', '한우마을', '등심집'],
-                '해산물': ['대하구이', '킹크랩', '랍스터', '관자구이'],
-                '구이': ['조개구이', '굴구이', '새우구이', '전복구이'],
-                '해물찜': ['대게찜', '아귀찜', '해물탕', '낙지볶음'],
-                '장어': ['장어구이', '민물장어', '바다장어', '장어덮밥']
+            {
+                name: "가디안",
+                number: "798",
+                types: ["강철", "페어리"],
+                tier: "S",
+                stats: { hp: 70, attack: 130, defense: 115, spAttack: 90, spDefense: 115, speed: 75 },
+                abilities: ["페어리오라"],
+                nature: "고집/의젓함",
+                evSpread: "공격 32 / HP 20 / 방어 14",
+                moves: ["문포스", "인파이트", "아이언헤드", "칼춤"],
+                weaknesses: ["불꽃", "땅"],
+                resistances: ["노말", "풀", "얼음", "비행", "에스퍼", "벌레", "바위", "드래곤", "강철", "페어리", "독"],
+                mega: false
             },
-            '왕십리': {
-                '한식': ['왕십리곱창', '국밥집', '삼겹살', '쭈꾸미'],
-                '중식': ['차이나팩토리', '짬뽕집', '중화루', '홍콩반점'],
-                '일식': ['스시', '돈카츠', '라멘', '덮밥'],
-                '양식': ['파스타', '스테이크', '피자', '빕스'],
-                '분식': ['신전떡볶이', '엽기떡볶이', '죠스떡볶이', '김밥천국'],
-                '치킨': ['교촌치킨', 'BBQ', 'BHC', '네네치킨'],
-                '피자': ['피자스쿨', '피자헛', '도미노피자', '미스터피자'],
-                '버거': ['버거킹', '맘스터치', '크라제버거', '수제버거'],
-                '삼겹살': ['대패집', '무한갈비', '구이가', '연탄집'],
-                '곱창': ['왕십리곱창', '막창이야기', '엽기곱창', '곱창이'],
-                '회/초밥': ['광어회', '연어회', '모둠회', '스시'],
-                '고기': ['숯불갈비', '소금구이', '한우마을', '등심집'],
-                '해산물': ['대하구이', '킹크랩', '랍스터', '관자구이'],
-                '구이': ['조개구이', '굴구이', '새우구이', '전복구이'],
-                '해물찜': ['대게찜', '아귀찜', '해물탕', '낙지볶음'],
-                '장어': ['장어구이', '민물장어', '바다장어', '장어덮밥']
+            {
+                name: "루카리오",
+                number: "448",
+                types: ["격투", "강철"],
+                tier: "A",
+                stats: { hp: 70, attack: 110, defense: 70, spAttack: 115, spDefense: 70, speed: 90 },
+                abilities: ["불굴의마음", "정의의마음(숨)"],
+                nature: "성급/수줍음",
+                evSpread: "특공 32 / 스피드 32 / HP 2",
+                moves: ["파동탄", "악의파동", "진공파", "용의파동"],
+                weaknesses: ["불꽃", "격투", "땅"],
+                resistances: ["노말", "풀", "얼음", "벌레", "바위", "드래곤", "강철", "악"],
+                mega: true,
+                megaInfo: "메가 루카리오 - 적응력 특성, 공격/특공 대폭 증가"
             },
-            '노원': {
-                '한식': ['노원국밥', '삼겹살', '김치찌개', '순두부'],
-                '중식': ['차이나팩토리', '짬뽕집', '중화루', '홍콩반점'],
-                '일식': ['스시', '돈카츠', '라멘', '우동'],
-                '양식': ['파스타', '스테이크', '빕스', '애슐리'],
-                '분식': ['신전떡볶이', '엽기떡볶이', '죠스떡볶이', '국대떡볶이'],
-                '치킨': ['교촌치킨', 'BBQ', 'BHC', '네네치킨'],
-                '피자': ['피자스쿨', '피자헛', '도미노피자', '미스터피자'],
-                '버거': ['버거킹', '맘스터치', '크라제버거', '롯데리아'],
-                '삼겹살': ['대패집', '무한갈비', '구이가', '연탄집'],
-                '곱창': ['노원곱창', '막창이야기', '엽기곱창', '곱창이'],
-                '회/초밥': ['광어회', '연어회', '모둠회', '스시'],
-                '고기': ['숯불갈비', '소금구이', '한우마을', '등심집'],
-                '해산물': ['대하구이', '킹크랩', '랍스터', '관자구이'],
-                '구이': ['조개구이', '굴구이', '새우구이', '전복구이'],
-                '해물찜': ['대게찜', '아귀찜', '해물탕', '낙지볶음'],
-                '장어': ['장어구이', '민물장어', '바다장어', '장어덮밥']
+            {
+                name: "팬텀",
+                number: "094",
+                types: ["고스트", "독"],
+                tier: "A",
+                stats: { hp: 60, attack: 65, defense: 60, spAttack: 130, spDefense: 75, speed: 110 },
+                abilities: ["저주받은바디"],
+                nature: "겁쟁이/수줍음",
+                evSpread: "특공 32 / 스피드 32 / HP 2",
+                moves: ["섀도볼", "슬러지봄", "기합구슬", "10만볼트"],
+                weaknesses: ["고스트", "악", "에스퍼", "땅"],
+                resistances: ["풀", "페어리", "독", "벌레", "노말", "격투"],
+                mega: true,
+                megaInfo: "메가 팬텀 - 특공/특방 대폭 증가"
             },
-            '수유': {
-                '한식': ['수유국밥', '삼겹살', '김치찌개', '쭈꾸미'],
-                '중식': ['차이나팩토리', '짬뽕집', '중화루', '홍콩반점'],
-                '일식': ['스시', '돈카츠', '라멘', '우동'],
-                '양식': ['파스타', '스테이크', '피자', '빕스'],
-                '분식': ['신전떡볶이', '엽기떡볶이', '죠스떡볶이', '김밥천국'],
-                '치킨': ['교촌치킨', 'BBQ', 'BHC', '네네치킨'],
-                '피자': ['피자스쿨', '피자헛', '도미노피자', '미스터피자'],
-                '버거': ['버거킹', '맘스터치', '크라제버거', '수제버거'],
-                '삼겹살': ['대패집', '무한갈비', '구이가', '연탄집'],
-                '곱창': ['수유곱창', '막창이야기', '엽기곱창', '곱창이'],
-                '회/초밥': ['광어회', '연어회', '모둠회', '스시'],
-                '고기': ['숯불갈비', '소금구이', '한우마을', '등심집'],
-                '해산물': ['대하구이', '킹크랩', '랍스터', '관자구이'],
-                '구이': ['조개구이', '굴구이', '새우구이', '전복구이'],
-                '해물찜': ['대게찜', '아귀찜', '해물탕', '낙지볶음'],
-                '장어': ['장어구이', '민물장어', '바다장어', '장어덮밥']
+            {
+                name: "메타그로스",
+                number: "376",
+                types: ["강철", "에스퍼"],
+                tier: "S",
+                stats: { hp: 80, attack: 135, defense: 130, spAttack: 95, spDefense: 90, speed: 70 },
+                abilities: ["클리어바디", "라이트메탈(숨)"],
+                nature: "고집/의젓함",
+                evSpread: "공격 32 / HP 20 / 스피드 14",
+                moves: ["코멧펀치", "지진", "총알펀치", "사념의박치기"],
+                weaknesses: ["불꽃", "땅", "고스트", "악"],
+                resistances: ["노말", "풀", "얼음", "비행", "바위", "드래곤", "강철", "페어리", "에스퍼"],
+                mega: true,
+                megaInfo: "메가 메타그로스 - 단단한발톱 특성"
             },
-            '연신내': {
-                '한식': ['연신내국밥', '삼겹살', '김치찌개', '쭈꾸미'],
-                '중식': ['차이나팩토리', '짬뽕집', '중화루', '홍콩반점'],
-                '일식': ['스시', '돈카츠', '라멘', '우동'],
-                '양식': ['파스타', '스테이크', '피자', '빕스'],
-                '분식': ['신전떡볶이', '엽기떡볶이', '죠스떡볶이', '김밥천국'],
-                '치킨': ['교촌치킨', 'BBQ', 'BHC', '네네치킨'],
-                '피자': ['피자스쿨', '피자헛', '도미노피자', '미스터피자'],
-                '버거': ['버거킹', '맘스터치', '크라제버거', '롯데리아'],
-                '삼겹살': ['대패집', '무한갈비', '구이가', '연탄집'],
-                '곱창': ['연신내곱창', '막창이야기', '엽기곱창', '곱창이'],
-                '회/초밥': ['광어회', '연어회', '모둠회', '스시'],
-                '고기': ['숯불갈비', '소금구이', '한우마을', '등심집'],
-                '해산물': ['대하구이', '킹크랩', '랍스터', '관자구이'],
-                '구이': ['조개구이', '굴구이', '새우구이', '전복구이'],
-                '해물찜': ['대게찜', '아귀찜', '해물탕', '낙지볶음'],
-                '장어': ['장어구이', '민물장어', '바다장어', '장어덮밥']
+            {
+                name: "보만다",
+                number: "373",
+                types: ["드래곤", "비행"],
+                tier: "S",
+                stats: { hp: 95, attack: 135, defense: 80, spAttack: 110, spDefense: 80, speed: 100 },
+                abilities: ["위협", "자신만만(숨)"],
+                nature: "고집/의젓함",
+                evSpread: "공격 32 / 스피드 32 / HP 2",
+                moves: ["역린", "지진", "스톤에지", "불대문자"],
+                weaknesses: ["얼음", "드래곤", "페어리", "바위"],
+                resistances: ["풀", "격투", "벌레", "불꽃", "물"],
+                mega: true,
+                megaInfo: "메가 보만다 - 스카이스킨 특성"
             },
-            '상수': {
-                '한식': ['상수쭈꾸미', '국밥', '삼겹살', '김치찌개'],
-                '중식': ['차이나팩토리', '짬뽕집', '중화루', '홍콩반점'],
-                '일식': ['스시', '돈카츠', '라멘', '우동'],
-                '양식': ['파스타', '스테이크', '피자', '리조또'],
-                '분식': ['신전떡볶이', '엽기떡볶이', '죠스떡볶이', '국대떡볶이'],
-                '치킨': ['교촌치킨', 'BBQ', 'BHC', '네네치킨'],
-                '피자': ['피자스쿨', '피자헛', '도미노피자', '미스터피자'],
-                '버거': ['버거킹', '맘스터치', '크라제버거', '수제버거'],
-                '삼겹살': ['대패집', '무한갈비', '구이가', '연탄집'],
-                '곱창': ['상수곱창', '막창이야기', '엽기곱창', '곱창이'],
-                '회/초밥': ['광어회', '연어회', '모둠회', '스시'],
-                '고기': ['숯불갈비', '소금구이', '한우마을', '등심집'],
-                '해산물': ['대하구이', '킹크랩', '랍스터', '관자구이'],
-                '구이': ['조개구이', '굴구이', '새우구이', '전복구이'],
-                '해물찜': ['대게찜', '아귀찜', '해물탕', '낙지볶음'],
-                '장어': ['장어구이', '민물장어', '바다장어', '장어덮밥']
+            {
+                name: "번치코",
+                number: "815",
+                types: ["불꽃"],
+                tier: "A",
+                stats: { hp: 80, attack: 116, defense: 75, spAttack: 65, spDefense: 75, speed: 119 },
+                abilities: ["맹화", "리베로(숨)"],
+                nature: "고집/명랑",
+                evSpread: "공격 32 / 스피드 32 / HP 2",
+                moves: ["화염볼", "비행무릎차기", "불꽃펀치", "아이언헤드"],
+                weaknesses: ["물", "땅", "바위"],
+                resistances: ["불꽃", "풀", "얼음", "벌레", "강철", "페어리"],
+                mega: false
             },
-            '망원': {
-                '한식': ['망원동고기', '국밥', '삼겹살', '김치찌개'],
-                '중식': ['차이나팩토리', '짬뽕집', '중화루', '홍콩반점'],
-                '일식': ['스시', '돈카츠', '라멘', '우동'],
-                '양식': ['파스타', '스테이크', '피자', '리조또'],
-                '분식': ['신전떡볶이', '엽기떡볶이', '죠스떡볶이', '국대떡볶이'],
-                '치킨': ['교촌치킨', 'BBQ', 'BHC', '네네치킨'],
-                '피자': ['피자스쿨', '피자헛', '도미노피자', '미스터피자'],
-                '버거': ['버거킹', '맘스터치', '크라제버거', '수제버거'],
-                '삼겹살': ['대패집', '무한갈비', '구이가', '연탄집'],
-                '곱창': ['망원곱창', '막창이야기', '엽기곱창', '곱창이'],
-                '회/초밥': ['광어회', '연어회', '모둠회', '스시'],
-                '고기': ['숯불갈비', '소금구이', '한우마을', '등심집'],
-                '해산물': ['대하구이', '킹크랩', '랍스터', '관자구이'],
-                '구이': ['조개구이', '굴구이', '새우구이', '전복구이'],
-                '해물찜': ['대게찜', '아귀찜', '해물탕', '낙지볶음'],
-                '장어': ['장어구이', '민물장어', '바다장어', '장어덮밥']
+            {
+                name: "드래펄트",
+                number: "887",
+                types: ["드래곤", "고스트"],
+                tier: "S",
+                stats: { hp: 88, attack: 120, defense: 75, spAttack: 100, spDefense: 75, speed: 142 },
+                abilities: ["클리어바디", "저격수(숨)"],
+                nature: "고집/명랑",
+                evSpread: "공격 32 / 스피드 32 / HP 2",
+                moves: ["드래곤애로우", "고스트다이브", "불대문자", "강철날개"],
+                weaknesses: ["얼음", "고스트", "악", "드래곤", "페어리"],
+                resistances: ["불꽃", "물", "전기", "풀", "독", "벌레", "노말", "격투"],
+                mega: false
+            },
+            {
+                name: "에이스번",
+                number: "815",
+                types: ["불꽃"],
+                tier: "S",
+                stats: { hp: 80, attack: 116, defense: 75, spAttack: 65, spDefense: 75, speed: 119 },
+                abilities: ["맹화", "리베로(숨)"],
+                nature: "고집/명랑",
+                evSpread: "공격 32 / 스피드 32 / HP 2",
+                moves: ["파이어볼", "하이점프킥", "아이언헤드", "카운터"],
+                weaknesses: ["물", "땅", "바위"],
+                resistances: ["불꽃", "풀", "얼음", "벌레", "강철", "페어리"],
+                mega: false
+            },
+            {
+                name: "인텔리온",
+                number: "818",
+                types: ["물"],
+                tier: "A",
+                stats: { hp: 70, attack: 85, defense: 65, spAttack: 125, spDefense: 65, speed: 120 },
+                abilities: ["급류", "저격수(숨)"],
+                nature: "겁쟁이/수줍음",
+                evSpread: "특공 32 / 스피드 32 / HP 2",
+                moves: ["하이드로스나이프", "냉동빔", "에어슬래시", "악의파동"],
+                weaknesses: ["전기", "풀"],
+                resistances: ["강철", "불꽃", "물", "얼음"],
+                mega: false
+            },
+            {
+                name: "지라치",
+                number: "385",
+                types: ["강철", "에스퍼"],
+                tier: "S",
+                stats: { hp: 100, attack: 100, defense: 100, spAttack: 100, spDefense: 100, speed: 100 },
+                abilities: ["하늘의은총"],
+                nature: "냉정/신중",
+                evSpread: "HP 32 / 방어 16 / 특방 16 / 스피드 2",
+                moves: ["아이언헤드", "불대문자", "사념의박치기", "트릭"],
+                weaknesses: ["불꽃", "땅", "고스트", "악"],
+                resistances: ["노말", "풀", "얼음", "비행", "바위", "드래곤", "강철", "페어리", "에스퍼", "독"],
+                mega: false
             }
-        };
-
-        const cafes = {
-            '홍대': ['스타벅스홍대점', '투썸플레이스', '할리스', '커피빈', '폴바셋', '탐앤탐스'],
-            '신촌': ['스타벅스신촌점', '투썸플레이스', '할리스', '커피빈', '이디야'],
-            '건대': ['스타벅스건대점', '투썸플레이스', '할리스', '커피빈', '메가커피'],
-            '혜화/대학로': ['스타벅스혜화점', '투썸플레이스', '할리스', '커피빈', '폴바셋'],
-            '성신여대': ['스타벅스성신여대점', '투썸플레이스', '할리스', '이디야', '메가커피'],
-            '왕십리': ['스타벅스왕십리점', '투썸플레이스', '할리스', '커피빈', '이디야'],
-            '노원': ['스타벅스노원점', '투썸플레이스', '할리스', '커피빈', '메가커피'],
-            '수유': ['스타벅스수유점', '투썸플레이스', '할리스', '이디야', '메가커피'],
-            '연신내': ['스타벅스연신내점', '투썸플레이스', '할리스', '커피빈', '이디야'],
-            '상수': ['스타벅스상수점', '투썸플레이스', '할리스', '커피빈', '폴바셋'],
-            '망원': ['스타벅스망원점', '투썸플레이스', '할리스', '커피빈', '메가커피']
-        };
-
-        const activities = {
-            '홍대': {
-                '보드게임': ['보드게임카페홍대점', '보드라이프', '롤링다이스'],
-                '노래방': ['코인노래방홍대점', '쿠키노래방', '수노래방'],
-                '영화': ['CGV홍대', '메가박스홍대', '롯데시네마홍대'],
-                '볼링': ['홍대볼링장', '스트라이크볼링'],
-                '방탈출': ['비트포비아홍대점', '방탈출카페']
-            },
-            '신촌': {
-                '보드게임': ['보드게임카페신촌점', '보드라이프'],
-                '노래방': ['코인노래방신촌점', '수노래방'],
-                '영화': ['CGV신촌', '아트레온'],
-                '볼링': ['신촌볼링장'],
-                '방탈출': ['방탈출카페신촌점']
-            },
-            '건대': {
-                '보드게임': ['보드게임카페건대점', '롤링다이스'],
-                '노래방': ['코인노래방건대점', '수노래방'],
-                '영화': ['롯데시네마건대입구', 'CGV건대'],
-                '볼링': ['건대볼링장'],
-                '방탈출': ['방탈출카페건대점']
-            }
-        };
-        
-        const coupleMissions = [
-            '서로 눈 마주치고 30초 이상 웃지 않기',
-            '오늘 하루 "사랑해" 10번 이상 말하기',
-            '상대방 손 꼭 잡고 5분 이상 걷기',
-            '셀카 3장 이상 찍기 (다양한 포즈로)',
-            '상대방 칭찬 5가지 말해주기',
-            '커플룩 아이템 하나 찾아서 함께 착용하기',
-            '서로에게 좋아하는 점 3가지 말하기',
-            '오늘 데이트 중 가장 행복했던 순간 공유하기',
-            '상대방이 좋아하는 음식 맞추기 게임',
-            '다음 데이트 때 하고 싶은 것 서로 말하기',
-            '손글씨로 사랑 메시지 적어서 교환하기',
-            '서로의 핸드폰 배경화면을 커플 사진으로 바꾸기',
-            '오늘 하루 상대방 별명으로만 부르기',
-            '길에서 하트 모양 찾아보기',
-            '상대방 손에 입맞춤 해주기',
-            '서로 안고 10초 세기',
-            '다음에 함께 가고 싶은 곳 3곳 이야기하기',
-            '오늘 데이트 중 가장 웃겼던 순간 공유하기',
-            '서로에게 "고마워" 5번 이상 말하기',
-            '서로의 좋아하는 노래 들려주기',
-            '상대방 이름으로 삼행시 짓기',
-            '서로의 첫인상 이야기하기',
-            '10년 후 우리 모습 상상해서 말하기',
-            '서로에게 편지 쓰는 시간 갖기 (5분)',
-            '상대방 매력 포인트 3가지 찾기',
-            '오늘 하루 스킨십 20회 이상 하기',
-            '상대방이 좋아할 만한 선물 3가지 맞추기',
-            '서로의 버킷리스트 1개씩 공유하기',
-            '걸으면서 어깨동무 하기',
-            '서로 사진 10장씩 찍어주기',
-            '상대방 흉내내기 (말투, 행동)',
-            '다음 기념일에 하고 싶은 것 계획하기',
-            '서로 마사지 3분씩 해주기',
-            '오늘 하루 "예쁘다/멋있다" 5번 이상 말하기',
-            '서로의 꿈 이야기 나누기',
-            '발 맞춰서 10분 이상 걷기',
-            '상대방 손바닥에 하트 그려주기',
-            '재밌는 춤 함께 따라하기',
-            '서로 이상형 다시 확인하기',
-            '오늘 데이트 별점 주고 이유 말하기'
         ];
 
-        const lunchMenus = ['한식', '중식', '일식', '양식', '분식', '치킨', '피자', '버거', '해산물', '회/초밥', '구이'];
-        const dinnerMenus = ['한식', '중식', '일식', '양식', '치킨', '피자', '삼겹살', '곱창', '회/초밥', '고기', '해산물', '구이', '해물찜', '장어'];
+        let filteredData = [...pokemonData];
+        const searchInput = document.getElementById('searchInput');
+        const pokemonList = document.getElementById('pokemonList');
+        const noResults = document.getElementById('noResults');
+        const filterButtons = document.querySelectorAll('.filter-btn');
 
-        let afternoonActivities = [];
-        let nightActivities = [];
-
-        function selectWeather(weather) {
-            selectedWeather = weather;
-            const buttons = document.querySelectorAll('.section')[1].querySelectorAll('.option-btn');
-            buttons.forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
-            updateActivities();
-        }
-
-        function selectTemp(temp) {
-            selectedTemp = temp;
-            const buttons = document.querySelectorAll('.section')[2].querySelectorAll('.option-btn');
-            buttons.forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
-            updateActivities();
-        }
-
-        function selectVibe(vibe) {
-            selectedVibe = vibe;
-            const buttons = document.querySelectorAll('.section')[3].querySelectorAll('.option-btn');
-            buttons.forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
-        }
-
-        function selectSpecialDay(day) {
-            if (selectedSpecialDay === day) {
-                selectedSpecialDay = '없음';
-                const buttons = document.querySelectorAll('.section')[4].querySelectorAll('.option-btn');
-                buttons.forEach(btn => btn.classList.remove('active'));
-            } else {
-                selectedSpecialDay = day;
-                const buttons = document.querySelectorAll('.section')[4].querySelectorAll('.option-btn');
-                buttons.forEach(btn => btn.classList.remove('active'));
-                event.target.classList.add('active');
-            }
-        }
-
-        function calculateDday() {
-            const startDate = new Date('2025-05-14');
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            startDate.setHours(0, 0, 0, 0);
-            const diffTime = today - startDate;
-            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-            
-            if (diffDays < 0) {
-                return `D${diffDays}`;
-            } else if (diffDays === 0) {
-                return 'D-Day 💕';
-            } else {
-                return `D+${diffDays}`;
-            }
-        }
-
-        function randomMission() {
-            if (pickedMission) return;
-            const mission = coupleMissions[Math.floor(Math.random() * coupleMissions.length)];
-            document.getElementById('summaryMission').textContent = mission;
-            animateValue('summaryMission');
-            pickedMission = true;
-            const btn = document.querySelector('[onclick="randomMission()"]');
-            if (btn) btn.style.display = 'none';
-            return mission;
-        }
-
-        function shareResult() {
-            const weather = document.getElementById('summaryWeather').textContent;
-            const temp = document.getElementById('summaryTemp').textContent;
-            const vibe = document.getElementById('summaryVibe').textContent;
-            const day = document.getElementById('summaryDay').textContent;
-            const location = document.getElementById('summaryLocation').textContent;
-            const lunch = document.getElementById('summaryLunch').textContent;
-            const afternoon = document.getElementById('summaryAfternoon').textContent;
-            const dinner = document.getElementById('summaryDinner').textContent;
-            const night = document.getElementById('summaryNight').textContent;
-            const mission = document.getElementById('summaryMission').textContent;
-            
-            let specialDayText = '';
-            if (selectedSpecialDay !== '없음') {
-                specialDayText = `\n🎉 특별한 날: ${selectedSpecialDay}`;
-            }
-            
-            const shareText = `💕 주현이와의 데이트 코스 💕\n\n` +
-                `🌤️ 날씨/온도/컨디션: ${weather} / ${temp} / ${vibe}${specialDayText}\n` +
-                `🎯 커플 미션: ${mission}\n\n` +
-                `🕐 13:30 만남: ${day} • ${location}\n` +
-                `🍱 점심: ${lunch}\n` +
-                `☕ 오후활동: ${afternoon}\n` +
-                `🍽️ 저녁: ${dinner}\n` +
-                `🌙 밤활동: ${night}\n` +
-                `💕 22:00 헤어짐`;
-            
-            if (navigator.share) {
-                navigator.share({
-                    title: '💕 주현이와의 데이트 코스',
-                    text: shareText
-                }).catch(() => {
-                    copyToClipboard(shareText);
-                });
-            } else {
-                copyToClipboard(shareText);
-            }
-        }
-
-        function copyToClipboard(text) {
-            const textarea = document.createElement('textarea');
-            textarea.value = text;
-            textarea.style.position = 'fixed';
-            textarea.style.opacity = '0';
-            document.body.appendChild(textarea);
-            textarea.select();
-            try {
-                document.execCommand('copy');
-                alert('데이트 코스가 클립보드에 복사되었습니다! 💕');
-            } catch (err) {
-                alert('복사에 실패했습니다. 다시 시도해주세요.');
-            }
-            document.body.removeChild(textarea);
-        }
-
-        function updateActivities() {
-            if (!selectedWeather || !selectedTemp) return;
-
-            const indoorAfternoon = ['카페', '보드게임', '대실', 'PC방', '만화카페', '방탈출', '쇼핑', 'VR체험', '찜질방', '코인노래방'];
-            const outdoorAfternoon = ['공원산책', '한강', '놀이공원', '동물원', '수족관', '전시회', '벼룩시장', '사진찍기', '드라이브'];
-            
-            const indoorNight = ['카페', '바', '와인바', '술집', '코인노래방', '만화카페', '심야영화', 'DVD방', '포차'];
-            const outdoorNight = ['야경보기', '산책', '한강 야경', '루프탑', '야시장', '공원 산책'];
-
-            if (selectedWeather === '비' || selectedWeather === '눈') {
-                afternoonActivities = indoorAfternoon;
-                nightActivities = indoorNight;
-            } else if (selectedWeather === '맑음') {
-                afternoonActivities = [...indoorAfternoon, ...outdoorAfternoon];
-                nightActivities = [...indoorNight, ...outdoorNight];
-            } else {
-                afternoonActivities = [...indoorAfternoon, ...outdoorAfternoon.slice(0, 5)];
-                nightActivities = [...indoorNight, ...outdoorNight];
-            }
-
-            if (selectedTemp === '매우더움' || selectedTemp === '더움') {
-                afternoonActivities = afternoonActivities.filter(a => 
-                    !['놀이공원', '동물원', '벼룩시장', '공원산책'].includes(a)
-                );
-                nightActivities = nightActivities.filter(a => 
-                    !['야시장', '산책', '공원 산책'].includes(a)
-                );
-            } else if (selectedTemp === '추움' || selectedTemp === '쌀쌀') {
-                afternoonActivities = afternoonActivities.filter(a => 
-                    !['한강', '수족관', '야시장', '드라이브'].includes(a)
-                );
-                nightActivities = nightActivities.filter(a => 
-                    !['한강 야경', '야시장', '루프탑', '공원 산책'].includes(a)
-                );
-            }
-        }
-
-        function getRestaurant(location, menuType) {
-            if (restaurants[location] && restaurants[location][menuType]) {
-                const list = restaurants[location][menuType];
-                return list[Math.floor(Math.random() * list.length)];
-            }
-            return menuType;
-        }
-
-        function getCafe(location) {
-            if (cafes[location]) {
-                const list = cafes[location];
-                return list[Math.floor(Math.random() * list.length)];
-            }
-            return '카페';
-        }
-
-        function getActivityPlace(location, activityType) {
-            if (activities[location] && activities[location][activityType]) {
-                const list = activities[location][activityType];
-                return list[Math.floor(Math.random() * list.length)];
-            }
-            return activityType;
-        }
-
-        function getRandomFromArray(arr, usedArr) {
-            const available = arr.filter(item => !usedArr.includes(item));
-            if (available.length === 0) return null;
-            const selected = available[Math.floor(Math.random() * available.length)];
-            usedArr.push(selected);
-            return selected;
-        }
-
-        function checkAllPicked() {
-            if (pickedDay && pickedLocation && pickedLunch && pickedAfternoon && pickedDinner && pickedNight) {
-                document.getElementById('randomAllBtn').style.display = 'none';
-                document.getElementById('shareBtn').classList.remove('hidden');
-                document.getElementById('resetBtn').classList.remove('hidden');
-                document.getElementById('rerollBtn').classList.remove('hidden');
-            }
-        }
-
-        function startRandom() {
-            if (!selectedWeather || !selectedTemp || !selectedVibe) {
-                alert('날씨, 온도, 오늘 컨디션을 모두 선택해주세요! 💕');
+        function renderPokemon(data) {
+            if (data.length === 0) {
+                pokemonList.style.display = 'none';
+                noResults.style.display = 'block';
                 return;
             }
 
-            document.getElementById('settingsScreen').classList.add('hidden');
-            document.getElementById('randomScreen').classList.remove('hidden');
+            pokemonList.style.display = 'grid';
+            noResults.style.display = 'none';
 
-            document.getElementById('summaryWeather').textContent = selectedWeather;
-            document.getElementById('summaryTemp').textContent = selectedTemp;
-            document.getElementById('summaryVibe').textContent = selectedVibe;
-            
-            if (selectedSpecialDay !== '없음') {
-                document.getElementById('specialDayDisplay').style.display = '';
-                document.getElementById('summarySpecialDay').textContent = selectedSpecialDay;
-            }
+            pokemonList.innerHTML = data.map(pokemon => {
+                const maxStat = 255;
+                const statsHTML = Object.entries(pokemon.stats).map(([key, value]) => {
+                    const statNames = {
+                        hp: 'HP',
+                        attack: '공격',
+                        defense: '방어',
+                        spAttack: '특공',
+                        spDefense: '특방',
+                        speed: '스피드'
+                    };
+                    const percentage = (value / maxStat) * 100;
+                    return `
+                        <div class="stat-row">
+                            <span class="stat-name">${statNames[key]}</span>
+                            <div class="stat-bar-container">
+                                <div class="stat-bar" style="width: ${percentage}%"></div>
+                                <span class="stat-value">${value}</span>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                const tierClass = `tier-${pokemon.tier.toLowerCase()}`;
+                
+                return `
+                    <div class="pokemon-card">
+                        <span class="tier-badge ${tierClass}">Tier ${pokemon.tier}</span>
+                        <div class="pokemon-header">
+                            <span class="pokemon-name">${pokemon.name}</span>
+                            <span class="pokemon-number">#${pokemon.number}</span>
+                        </div>
+                        
+                        <div class="type-container">
+                            ${pokemon.types.map(type => `<span class="type ${getTypeClass(type)}">${type}</span>`).join('')}
+                        </div>
+
+                        <div class="stats-section">
+                            ${statsHTML}
+                        </div>
+
+                        <div class="info-section">
+                            <h3>특성</h3>
+                            ${pokemon.abilities.map(ability => `<span class="ability-badge">${ability}</span>`).join('')}
+                        </div>
+
+                        <div class="info-section">
+                            <h3>추천 세팅</h3>
+                            <div class="info-item">
+                                <span class="info-label">성격:</span> ${pokemon.nature}
+                            </div>
+                            <div class="ev-spread">
+                                <strong>능력 포인트:</strong> ${pokemon.evSpread}
+                            </div>
+                        </div>
+
+                        <div class="info-section">
+                            <h3>추천 기술</h3>
+                            ${pokemon.moves.map(move => `<span class="move">${move}</span>`).join('')}
+                        </div>
+
+                        <div class="info-section">
+                            <h3>약점</h3>
+                            ${pokemon.weaknesses.map(w => `<span class="weakness">${w}</span>`).join('')}
+                        </div>
+
+                        <div class="info-section">
+                            <h3>내성</h3>
+                            ${pokemon.resistances.map(r => `<span class="resistance">${r}</span>`).join('')}
+                        </div>
+
+                        ${pokemon.mega ? `<div class="mega-badge">⭐ ${pokemon.megaInfo}</div>` : ''}
+                        ${pokemon.special ? `<div class="info-section"><strong>특수:</strong> ${pokemon.special}</div>` : ''}
+                    </div>
+                `;
+            }).join('');
         }
 
-        function animateValue(elementId) {
-            const element = document.getElementById(elementId);
-            element.style.transform = 'scale(1.15)';
-            element.style.transition = 'transform 0.3s ease';
-            setTimeout(() => {
-                element.style.transform = 'scale(1)';
-            }, 300);
+        function getTypeClass(type) {
+            const typeMap = {
+                '노말': 'normal',
+                '불꽃': 'fire',
+                '물': 'water',
+                '풀': 'grass',
+                '전기': 'electric',
+                '얼음': 'ice',
+                '격투': 'fighting',
+                '독': 'poison',
+                '땅': 'ground',
+                '비행': 'flying',
+                '에스퍼': 'psychic',
+                '벌레': 'bug',
+                '바위': 'rock',
+                '고스트': 'ghost',
+                '드래곤': 'dragon',
+                '악': 'dark',
+                '강철': 'steel',
+                '페어리': 'fairy'
+            };
+            return typeMap[type] || 'normal';
         }
 
-        function randomDay() {
-            if (pickedDay) return;
-            const result = getRandomFromArray(days, usedDays);
-            if (!result) {
-                alert('더 이상 선택 가능한 요일이 없습니다!');
-                return;
-            }
-            document.getElementById('summaryDay').textContent = result;
-            animateValue('summaryDay');
-            pickedDay = true;
-            const btn = document.querySelector('[onclick="randomDay(); randomLocation();"]');
-            if (btn) btn.style.display = 'none';
-            return result;
-        }
-
-        function randomLocation() {
-            if (pickedLocation) return;
-            const location = getRandomFromArray(locations, usedLocations);
-            if (!location) {
-                alert('더 이상 선택 가능한 지역이 없습니다!');
-                return;
-            }
-            selectedLocation = location;
-            const station = stationInfo[location][Math.floor(Math.random() * stationInfo[location].length)];
-            selectedStation = station;
-            document.getElementById('summaryLocation').textContent = `${location} (${station})`;
-            animateValue('summaryLocation');
-            pickedLocation = true;
-            const btn = document.querySelector('[onclick="randomDay(); randomLocation();"]');
-            if (btn) btn.style.display = 'none';
-            checkAllPicked();
-            return location;
-        }
-
-        function randomLunch() {
-            if (pickedLunch) return;
-            const menuType = getRandomFromArray(lunchMenus, usedLunchMenus);
-            if (!menuType) {
-                alert('더 이상 선택 가능한 점심 메뉴가 없습니다!');
-                return;
-            }
-            const restaurant = getRestaurant(selectedLocation, menuType);
-            document.getElementById('summaryLunch').textContent = `${menuType} - ${restaurant}`;
-            animateValue('summaryLunch');
-            pickedLunch = true;
-            const btn = document.querySelector('[onclick="randomLunch()"]');
-            if (btn) btn.style.display = 'none';
-            checkAllPicked();
-            return menuType;
-        }
-
-        function randomAfternoon() {
-            if (pickedAfternoon) return;
-            if (afternoonActivities.length === 0) {
-                alert('날씨와 온도를 먼저 선택해주세요!');
-                return;
-            }
-            const activity = getRandomFromArray(afternoonActivities, usedAfternoonActivities);
-            if (!activity) {
-                alert('더 이상 선택 가능한 오후 활동이 없습니다!');
-                return;
-            }
-            selectedAfternoonActivity = activity;
-            let result = activity;
-            
-            if (activity === '카페') {
-                const cafe = getCafe(selectedLocation);
-                if (cafe !== '카페') {
-                    result = `카페 - ${cafe}`;
-                }
-            } else if (['보드게임', '노래방', '영화', '볼링', '방탈출'].includes(activity)) {
-                const place = getActivityPlace(selectedLocation, activity);
-                if (place !== activity) {
-                    result = `${activity} - ${place}`;
-                }
-            }
-            
-            document.getElementById('summaryAfternoon').textContent = result;
-            animateValue('summaryAfternoon');
-            pickedAfternoon = true;
-            const btn = document.querySelector('[onclick="randomAfternoon()"]');
-            if (btn) btn.style.display = 'none';
-            checkAllPicked();
-            return activity;
-        }
-
-        function randomDinner() {
-            if (pickedDinner) return;
-            
-            let menuList = [...dinnerMenus];
-            
-            if (selectedSpecialDay !== '없음') {
-                const specialMenus = ['해산물', '회/초밥', '고기', '해물찜', '장어'];
-                const availableSpecial = specialMenus.filter(m => !usedDinnerMenus.includes(m));
-                if (availableSpecial.length > 0 && Math.random() < 0.7) {
-                    menuList = availableSpecial;
-                }
-            }
-            
-            const menuType = getRandomFromArray(menuList, usedDinnerMenus);
-            if (!menuType) {
-                alert('더 이상 선택 가능한 저녁 메뉴가 없습니다!');
-                return;
-            }
-            const restaurant = getRestaurant(selectedLocation, menuType);
-            document.getElementById('summaryDinner').textContent = `${menuType} - ${restaurant}`;
-            animateValue('summaryDinner');
-            pickedDinner = true;
-            const btn = document.querySelector('[onclick="randomDinner()"]');
-            if (btn) btn.style.display = 'none';
-            checkAllPicked();
-            return menuType;
-        }
-
-        function randomNight() {
-            if (pickedNight) return;
-            if (nightActivities.length === 0) {
-                alert('날씨와 온도를 먼저 선택해주세요!');
-                return;
-            }
-            
-            let filteredNight = [...nightActivities];
-            
-            if (selectedAfternoonActivity) {
-                filteredNight = filteredNight.filter(a => a !== selectedAfternoonActivity);
-            }
-            
-            if (selectedSpecialDay !== '없음') {
-                const romanticActivities = ['야경보기', '산책', '한강 야경', '루프탑', '바', '와인바', '카페'];
-                const availableRomantic = romanticActivities.filter(a => 
-                    filteredNight.includes(a) && !usedNightActivities.includes(a)
-                );
-                if (availableRomantic.length > 0 && Math.random() < 0.7) {
-                    filteredNight = availableRomantic;
-                }
-            }
-            
-            if (selectedVibe === '완전여유' || selectedVibe === '여유') {
-                filteredNight = filteredNight.filter(a => 
-                    !['포차', '야시장'].includes(a)
-                );
-            } else if (selectedVibe === '활동적' || selectedVibe === '완전빡세') {
-                filteredNight = filteredNight.filter(a => 
-                    !['산책', '야경보기', '만화카페', '공원 산책'].includes(a)
-                );
-            }
-            
-            const activity = getRandomFromArray(filteredNight, usedNightActivities);
-            if (!activity) {
-                alert('더 이상 선택 가능한 밤 활동이 없습니다!');
-                return;
-            }
-            let result = activity;
-            
-            if (['노래방', '영화', '볼링', '보드게임'].includes(activity)) {
-                const place = getActivityPlace(selectedLocation, activity);
-                if (place !== activity) {
-                    result = `${activity} - ${place}`;
-                }
-            }
-            
-            document.getElementById('summaryNight').textContent = result;
-            animateValue('summaryNight');
-            pickedNight = true;
-            const btn = document.querySelector('[onclick="randomNight()"]');
-            if (btn) btn.style.display = 'none';
-            checkAllPicked();
-            
-            setTimeout(() => {
-                const wrapper = document.querySelector('.timeline-wrapper');
-                if (wrapper) {
-                    wrapper.scrollTo({
-                        top: wrapper.scrollHeight,
-                        behavior: 'smooth'
-                    });
-                }
-            }, 100);
-            
-            return activity;
-        }
-
-        function randomAll() {
-            let delay = 0;
-            
-            if (!pickedMission) {
-                setTimeout(() => randomMission(), delay);
-                delay += 200;
-            }
-            
-            if (!pickedDay && !pickedLocation) {
-                setTimeout(() => {
-                    randomDay();
-                    randomLocation();
-                }, delay);
-                delay += 200;
-            }
-            
-            if (!pickedLunch) {
-                setTimeout(() => randomLunch(), delay);
-                delay += 200;
-            }
-            
-            if (!pickedAfternoon) {
-                setTimeout(() => randomAfternoon(), delay);
-                delay += 200;
-            }
-            
-            if (!pickedDinner) {
-                setTimeout(() => randomDinner(), delay);
-                delay += 200;
-            }
-            
-            if (!pickedNight) {
-                setTimeout(() => randomNight(), delay);
-            }
-            
-            setTimeout(() => {
-                document.getElementById('randomAllBtn').style.display = 'none';
-                document.getElementById('shareBtn').classList.remove('hidden');
-                document.getElementById('resetBtn').classList.remove('hidden');
-                document.getElementById('rerollBtn').classList.remove('hidden');
-            }, delay + 200);
-        }
-
-        function rerollAll() {
-            pickedDay = false;
-            pickedLocation = false;
-            pickedLunch = false;
-            pickedAfternoon = false;
-            pickedDinner = false;
-            pickedNight = false;
-            pickedMission = false;
-
-            usedDays = [];
-            usedLocations = [];
-            usedLunchMenus = [];
-            usedAfternoonActivities = [];
-            usedDinnerMenus = [];
-            usedNightActivities = [];
-            selectedAfternoonActivity = '';
-
-            document.getElementById('summaryDay').textContent = '?';
-            document.getElementById('summaryLocation').textContent = '?';
-            document.getElementById('summaryLunch').textContent = '?';
-            document.getElementById('summaryAfternoon').textContent = '?';
-            document.getElementById('summaryDinner').textContent = '?';
-            document.getElementById('summaryNight').textContent = '?';
-            document.getElementById('summaryMission').textContent = '?';
-
-            document.getElementById('randomAllBtn').style.display = '';
-            document.getElementById('shareBtn').classList.add('hidden');
-            document.getElementById('resetBtn').classList.add('hidden');
-            document.getElementById('rerollBtn').classList.add('hidden');
-
-            const buttons = document.querySelectorAll('.mini-btn');
-            buttons.forEach(btn => btn.style.display = '');
-        }
-
-        function resetAll() {
-            location.reload();
-        }
-
-        window.addEventListener('DOMContentLoaded', function() {
-            const dday = calculateDday();
-            document.getElementById('ddayText').textContent = dday;
+        searchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            filteredData = pokemonData.filter(pokemon => 
+                pokemon.name.toLowerCase().includes(searchTerm)
+            );
+            renderPokemon(filteredData);
         });
+
+        filterButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                const filterType = btn.dataset.type;
+                if (filterType === 'all') {
+                    filteredData = [...pokemonData];
+                } else {
+                    filteredData = pokemonData.filter(pokemon => 
+                        pokemon.types.includes(filterType)
+                    );
+                }
+                renderPokemon(filteredData);
+                searchInput.value = '';
+            });
+        });
+
+        renderPokemon(pokemonData);
     </script>
 </body>
 </html>

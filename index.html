@@ -518,6 +518,85 @@
                 grid-template-columns: repeat(3, 1fr);
             }
         }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.6);
+            animation: fadeIn 0.2s;
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 25px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            animation: slideUp 0.3s;
+            position: relative;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .close {
+            color: #999;
+            float: right;
+            font-size: 32px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 20px;
+        }
+
+        .close:hover {
+            color: #333;
+        }
+
+        .modal-title {
+            color: #667eea;
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .modal-description {
+            color: #555;
+            line-height: 1.6;
+            font-size: 0.95em;
+        }
+
+        .modal-meta {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 10px;
+            margin-top: 15px;
+            font-size: 0.9em;
+        }
+
+        .clickable {
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .clickable:hover {
+            transform: scale(1.05);
+            opacity: 0.8;
+        }
     </style>
 </head>
 <body>
@@ -527,13 +606,21 @@
             <p class="subtitle">실전 배틀 가이드</p>
         </header>
 
+        <div id="infoModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2 class="modal-title" id="modalTitle"></h2>
+                <div class="modal-description" id="modalDescription"></div>
+                <div class="modal-meta" id="modalMeta"></div>
+            </div>
+        </div>
+
         <div class="tab-container">
             <div class="tabs">
                 <button class="tab active" data-tab="pokemon">포켓몬</button>
                 <button class="tab" data-tab="mega">메가진화</button>
                 <button class="tab" data-tab="type">타입상성</button>
                 <button class="tab" data-tab="items">도구</button>
-                <button class="tab" data-tab="tier">티어</button>
                 <button class="tab" data-tab="calc">계산기</button>
             </div>
         </div>
@@ -550,16 +637,21 @@
                     <button class="filter-btn type steel" data-type="강철">강철</button>
                     <button class="filter-btn type fairy" data-type="페어리">페어리</button>
                 </div>
+                <div class="filter-buttons" style="margin-top: 10px;">
+                    <button class="filter-btn" onclick="sortByUsage('desc')" style="background: #4caf50; color: white;">사용률 높은순</button>
+                    <button class="filter-btn" onclick="sortByUsage('asc')" style="background: #ff9800; color: white;">사용률 낮은순</button>
+                    <button class="filter-btn" onclick="sortByDefault()" style="background: #999; color: white;">기본순</button>
+                </div>
             </div>
             <div id="pokemonList" class="pokemon-grid"></div>
             <div id="noResults" class="no-results" style="display: none;">검색 결과가 없습니다.</div>
         </div>
 
         <div id="mega-tab" class="tab-content">
-            <div class="content-box">
-                <h2>메가진화 포켓몬</h2>
-                <div id="megaList"></div>
+            <div class="search-box">
+                <h2 style="color: #667eea; margin-bottom: 15px; text-align: center;">메가진화 포켓몬</h2>
             </div>
+            <div id="megaList" class="pokemon-grid"></div>
         </div>
 
         <div id="type-tab" class="tab-content">
@@ -576,14 +668,12 @@
         <div id="items-tab" class="tab-content">
             <div class="content-box">
                 <h2>많이 사용하는 도구</h2>
+                <div class="filter-buttons" style="margin-bottom: 15px; justify-content: center;">
+                    <button class="filter-btn" onclick="sortItems('desc')" style="background: #4caf50; color: white;">사용률 높은순</button>
+                    <button class="filter-btn" onclick="sortItems('asc')" style="background: #ff9800; color: white;">사용률 낮은순</button>
+                    <button class="filter-btn" onclick="sortItems('default')" style="background: #999; color: white;">기본순</button>
+                </div>
                 <div id="itemsList"></div>
-            </div>
-        </div>
-
-        <div id="tier-tab" class="tab-content">
-            <div class="content-box">
-                <h2>메타 티어 리스트</h2>
-                <div id="tierList"></div>
             </div>
         </div>
 
@@ -615,9 +705,96 @@
     </div>
 
     <script>
+        const moveInfo = {
+            "오버히트": { type: "불꽃", power: 130, accuracy: 90, pp: 5, description: "강력한 불꽃 공격. 사용 후 특공이 2단계 감소", effect: "일격 고화력", usage: 85 },
+            "에어슬래시": { type: "비행", power: 75, accuracy: 95, pp: 15, description: "날카로운 바람으로 공격. 급소율이 높음", effect: "급소 노리기", usage: 72 },
+            "용의파동": { type: "드래곤", power: 85, accuracy: 100, pp: 10, description: "충격파를 발생시켜 공격. 반드시 명중", effect: "안정적인 견제", usage: 78 },
+            "태양광선": { type: "풀", power: 120, accuracy: 100, pp: 10, description: "1턴째에 빛을 모아 2턴째에 공격. 쾌청 시 즉시 발동", effect: "쾌청 시 강력함", usage: 65 },
+            "하이드로펌프": { type: "물", power: 110, accuracy: 80, pp: 5, description: "강력한 물 공격", effect: "고위력 물 기술", usage: 88 },
+            "냉동빔": { type: "얼음", power: 90, accuracy: 100, pp: 10, description: "냉동광선으로 공격. 10% 확률로 얼음", effect: "안정적인 얼음 기술", usage: 92 },
+            "악의파동": { type: "악", power: 80, accuracy: 100, pp: 15, description: "악한 생각을 파동으로 공격. 20% 풀죽음", effect: "범용 견제기", usage: 86 },
+            "풀묶기": { type: "풀", power: 80, accuracy: 100, pp: 20, description: "덩굴로 감아 공격. 상대 스피드 감소", effect: "스피드 컨트롤", usage: 58 },
+            "역린": { type: "드래곤", power: 120, accuracy: 100, pp: 10, description: "2-3턴 동안 공격 후 혼란", effect: "최강 드래곤 기술", usage: 95 },
+            "지진": { type: "땅", power: 100, accuracy: 100, pp: 10, description: "지진으로 주변 모두 공격", effect: "광역 물리 기술", usage: 98 },
+            "신속": { type: "노말", power: 80, accuracy: 100, pp: 5, description: "반드시 선제공격", effect: "선공기", usage: 82 },
+            "불대문자": { type: "불꽃", power: 110, accuracy: 85, pp: 5, description: "불꽃으로 공격. 10% 화상", effect: "강력한 불꽃 기술", usage: 90 },
+            "킹실드": { type: "강철", power: 0, accuracy: 100, pp: 10, description: "공격을 막고 접촉 시 상대 공격 2단계 감소", effect: "방어 + 디버프", usage: 94 },
+            "섀도크로": { type: "고스트", power: 90, accuracy: 100, pp: 15, description: "그림자로 베어 공격. 급소율 높음", effect: "고스트 주력기", usage: 88 },
+            "성스러운칼": { type: "격투", power: 90, accuracy: 100, pp: 15, description: "긴 뿔로 베어 공격", effect: "격투 안정기", usage: 75 },
+            "아이언헤드": { type: "강철", power: 80, accuracy: 100, pp: 15, description: "강철 머리로 공격. 30% 풀죽음", effect: "페어리 견제", usage: 91 },
+            "문포스": { type: "페어리", power: 95, accuracy: 100, pp: 10, description: "요정의 힘으로 공격", effect: "페어리 주력기", usage: 93 },
+            "인파이트": { type: "격투", power: 120, accuracy: 100, pp: 5, description: "전력으로 공격. 방어/특방 감소", effect: "최강 격투 기술", usage: 96 },
+            "칼춤": { type: "노말", power: 0, accuracy: 100, pp: 20, description: "공격을 2단계 상승", effect: "물리 셋업", usage: 89 },
+            "파동탄": { type: "격투", power: 80, accuracy: 100, pp: 20, description: "파동을 발사. 반드시 명중", effect: "필중 격투 기술", usage: 92 },
+            "진공파": { type: "격투", power: 40, accuracy: 100, pp: 30, description: "반드시 선제공격", effect: "격투 선공기", usage: 76 },
+            "섀도볼": { type: "고스트", power: 80, accuracy: 100, pp: 15, description: "검은 그림자 덩어리로 공격. 20% 특방 감소", effect: "특수 고스트 기술", usage: 94 },
+            "슬러지봄": { type: "독", power: 90, accuracy: 100, pp: 10, description: "더러운 오물을 던짐. 30% 독", effect: "페어리 견제", usage: 84 },
+            "기합구슬": { type: "격투", power: 120, accuracy: 70, pp: 5, description: "기합을 높여 공격. 명중 낮음", effect: "고위력 저명중", usage: 68 },
+            "10만볼트": { type: "전기", power: 90, accuracy: 100, pp: 15, description: "전격으로 공격. 10% 마비", effect: "전기 주력기", usage: 95 },
+            "코멧펀치": { type: "강철", power: 90, accuracy: 100, pp: 10, description: "혜성처럼 공격. 20% 공격 상승", effect: "강철 주력기", usage: 87 },
+            "총알펀치": { type: "강철", power: 40, accuracy: 100, pp: 30, description: "반드시 선제공격", effect: "강철 선공기", usage: 83 },
+            "사념의박치기": { type: "에스퍼", power: 80, accuracy: 100, pp: 15, description: "염력으로 공격. 20% 풀죽음", effect: "에스퍼 주력기", usage: 80 },
+            "스톤에지": { type: "바위", power: 100, accuracy: 80, pp: 5, description: "날카로운 바위로 공격. 급소율 높음", effect: "급소 노리기", usage: 91 },
+            "드래곤애로우": { type: "드래곤", power: 50, accuracy: 100, pp: 10, description: "2회 연속 공격", effect: "연속 드래곤 기술", usage: 88 },
+            "고스트다이브": { type: "고스트", power: 90, accuracy: 100, pp: 10, description: "1턴째 숨어서 2턴째 공격", effect: "회피 + 공격", usage: 70 },
+            "강철날개": { type: "강철", power: 70, accuracy: 90, pp: 25, description: "강철 날개로 공격. 10% 방어 상승", effect: "페어리 견제", usage: 65 },
+            "파이어볼": { type: "불꽃", power: 120, accuracy: 90, pp: 5, description: "불꽃 구슬로 공격", effect: "불꽃 주력기", usage: 86 },
+            "하이점프킥": { type: "격투", power: 130, accuracy: 90, pp: 10, description: "점프해서 공격. 빗나가면 반동 데미지", effect: "초고위력", usage: 79 },
+            "카운터": { type: "격투", power: 1, accuracy: 100, pp: 20, description: "물리 공격을 2배로 되돌림", effect: "물리 반격", usage: 72 },
+            "하이드로스나이프": { type: "물", power: 80, accuracy: 100, pp: 15, description: "물을 발사해 공격. 급소율 높음", effect: "급소 노리기", usage: 81 },
+            "트릭": { type: "에스퍼", power: 0, accuracy: 100, pp: 10, description: "도구를 교환", effect: "도구 교환", usage: 74 },
+            "브레이브버드": { type: "비행", power: 120, accuracy: 100, pp: 15, description: "돌진 공격. 반동 데미지 1/3", effect: "최강 비행 기술", usage: 97 },
+            "더블어택": { type: "노말", power: 35, accuracy: 90, pp: 10, description: "2회 연속 공격", effect: "연속 기술", usage: 62 },
+            "유턴": { type: "벌레", power: 70, accuracy: 100, pp: 20, description: "공격 후 교체", effect: "견제 후 교체", usage: 85 },
+            "불의펀치": { type: "불꽃", power: 75, accuracy: 100, pp: 15, description: "불꽃 주먹으로 공격. 10% 화상", effect: "강철 견제", usage: 77 },
+            "깨물어부수기": { type: "악", power: 80, accuracy: 100, pp: 15, description: "이빨로 공격. 20% 방어 감소", effect: "악 주력기", usage: 84 }
+        };
+
+        const abilityInfo = {
+            "맹화": { description: "HP가 1/3 이하일 때 불꽃 타입 기술의 위력이 1.5배 증가", effect: "위기 시 화력 증가", usage: 88 },
+            "선파워(숨)": { description: "날씨가 쾌청일 때 특공이 1.5배가 되지만 매 턴 HP가 1/8씩 감소", effect: "쾌청 시 강력한 특수 공격", usage: 72 },
+            "급류": { description: "HP가 1/3 이하일 때 물 타입 기술의 위력이 1.5배 증가", effect: "위기 시 화력 증가", usage: 90 },
+            "변환자재(숨)": { description: "사용한 기술과 같은 타입으로 변경됨", effect: "자속 보정을 항상 받음", usage: 95 },
+            "정신력": { description: "상대의 공격에 풀죽지 않음", effect: "안정적인 행동 보장", usage: 78 },
+            "멀티스케일(숨)": { description: "HP가 가득 찼을 때 받는 데미지가 1/2로 감소", effect: "첫 공격 생존력 증가", usage: 96 },
+            "배틀스위치": { description: "공격 기술 사용 시 블레이드 폼, 킹실드 사용 시 실드 폼으로 변경", effect: "공격/방어 폼 체인지", usage: 92 },
+            "페어리오라": { description: "자신과 아군의 페어리 타입 기술 위력이 1.3배 증가", effect: "페어리 기술 강화", usage: 85 },
+            "불굴의마음": { description: "풀죽을 때마다 스피드가 1단계 상승", effect: "풀죽음을 이용한 가속", usage: 82 },
+            "정의의마음(숨)": { description: "악 타입 기술에 맞으면 공격이 1단계 상승", effect: "악 타입 견제 시 강화", usage: 74 },
+            "저주받은바디": { description: "30% 확률로 자신을 공격한 상대의 기술 PP를 2 감소", effect: "PP 소모 유도", usage: 68 },
+            "클리어바디": { description: "상대 기술이나 특성으로 능력이 떨어지지 않음", effect: "능력 저하 방지", usage: 91 },
+            "라이트메탈(숨)": { description: "자신의 무게가 절반이 됨", effect: "무게 관련 기술 대응", usage: 58 },
+            "위협": { description: "등장 시 상대의 공격을 1단계 낮춤", effect: "물리 공격력 약화", usage: 94 },
+            "자신만만(숨)": { description: "상대를 쓰러뜨리면 공격이 1단계 상승", effect: "연속 격파 시 강화", usage: 87 },
+            "저격수(숨)": { description: "급소에 맞았을 때 위력이 2.25배로 증가 (기본 1.5배)", effect: "급소 데미지 증가", usage: 79 },
+            "리베로(숨)": { description: "사용하려는 기술과 같은 타입으로 변경됨", effect: "자속 보정을 항상 받음", usage: 93 },
+            "하늘의은총": { description: "기술의 추가 효과 발생 확률이 2배", effect: "아이언헤드 풀죽음 60%", usage: 89 },
+            "의욕": { description: "공격이 1.5배가 되지만 물리 기술 명중률이 0.8배", effect: "고위력 저명중", usage: 71 },
+            "무기력(숨)": { description: "접촉한 상대의 공격과 특공을 1단계 낮춤", effect: "접촉 시 약화", usage: 65 },
+            "불면": { description: "잠듦 상태가 되지 않음", effect: "수면 무효", usage: 76 }
+        };
+
+        const itemInfo = {
+            "구애머리띠": { description: "공격이 1.5배가 되지만 처음 선택한 기술만 사용 가능", usage: 96, recommend: "물리 어태커" },
+            "구애스카프": { description: "스피드가 1.5배가 되지만 처음 선택한 기술만 사용 가능", usage: 98, recommend: "선공 어태커" },
+            "구애안경": { description: "특공이 1.5배가 되지만 처음 선택한 기술만 사용 가능", usage: 94, recommend: "특수 어태커" },
+            "기합의띠": { description: "HP가 가득할 때 일격기를 버팀 (HP 1 남음)", usage: 92, recommend: "유리몸 어태커" },
+            "약점보험": { description: "약점 공격을 받으면 공격과 특공이 2단계 상승", usage: 85, recommend: "약점 많은 포켓몬" },
+            "목숨의구슬": { description: "기술 위력이 1.3배가 되지만 매 턴 최대 HP의 10% 감소", usage: 90, recommend: "고화력 어태커" },
+            "돌격조끼": { description: "특방이 1.5배가 되지만 변화기를 사용할 수 없음", usage: 88, recommend: "물리 어태커" },
+            "진화의휘석": { description: "방어와 특방이 1.5배 (미진화 포켓몬 전용)", usage: 65, recommend: "미진화 포켓몬" },
+            "식탁보": { description: "매 턴 최대 HP의 1/16 회복", usage: 82, recommend: "내구형 포켓몬" },
+            "자석": { description: "전기 타입 기술의 위력이 1.2배", usage: 58, recommend: "전기 타입" },
+            "나무열매": { description: "HP가 25% 이하가 되면 최대 HP의 1/3 회복", usage: 87, recommend: "모든 포켓몬" },
+            "흰색허브": { description: "능력이 떨어지면 원래대로 회복 (1회용)", usage: 74, recommend: "자가 디버프 기술 사용자" },
+            "풍선": { description: "땅 타입 기술을 무효화 (공격받으면 터짐)", usage: 79, recommend: "땅 약점 포켓몬" },
+            "안전모": { description: "급소에 맞지 않음", usage: 62, recommend: "내구형 포켓몬" },
+            "빛의점토": { description: "빛의장막/리플렉터 지속 시간 8턴", usage: 71, recommend: "서포터" }
+        };
+
         const pokemonData = [
             {
-                name: "리자몽", number: "006", types: ["불꽃", "비행"], tier: "S",
+                name: "리자몽", number: "006", types: ["불꽃", "비행"], tier: "S", usage: 95,
                 stats: { hp: 78, attack: 84, defense: 78, spAttack: 109, spDefense: 85, speed: 100 },
                 evs: { hp: 2, attack: 0, defense: 0, spAttack: 32, spDefense: 0, speed: 32 },
                 abilities: ["맹화", "선파워(숨)"], nature: "수줍음/겁쟁이",
@@ -628,7 +805,7 @@
                 mega: true, megaInfo: "메가 X (불꽃/드래곤) / 메가 Y (불꽃/비행)"
             },
             {
-                name: "개굴닌자", number: "658", types: ["물", "악"], tier: "S",
+                name: "개굴닌자", number: "658", types: ["물", "악"], tier: "S", usage: 98,
                 stats: { hp: 72, attack: 95, defense: 67, spAttack: 103, spDefense: 71, speed: 122 },
                 evs: { hp: 2, attack: 0, defense: 0, spAttack: 32, spDefense: 0, speed: 32 },
                 abilities: ["급류", "변환자재(숨)"], nature: "겁쟁이/수줍음",
@@ -640,7 +817,7 @@
                 mega: true, megaInfo: "메가 개굴닌자 - 최고 스피드"
             },
             {
-                name: "망나뇽", number: "149", types: ["드래곤", "비행"], tier: "S",
+                name: "망나뇽", number: "149", types: ["드래곤", "비행"], tier: "S", usage: 92,
                 stats: { hp: 91, attack: 134, defense: 95, spAttack: 100, spDefense: 100, speed: 80 },
                 evs: { hp: 20, attack: 32, defense: 0, spAttack: 0, spDefense: 0, speed: 14 },
                 abilities: ["정신력", "멀티스케일(숨)"], nature: "고집/의젓함",
@@ -651,7 +828,7 @@
                 resistances: ["풀", "격투", "벌레", "불꽃", "물"], mega: false
             },
             {
-                name: "킬가르도", number: "681", types: ["강철", "고스트"], tier: "A",
+                name: "킬가르도", number: "681", types: ["강철", "고스트"], tier: "A", usage: 78,
                 stats: { hp: 60, attack: 50, defense: 140, spAttack: 50, spDefense: 140, speed: 60 },
                 evs: { hp: 32, attack: 32, defense: 0, spAttack: 2, spDefense: 0, speed: 0 },
                 abilities: ["배틀스위치"], nature: "냉정/용감",
@@ -663,7 +840,7 @@
                 mega: false, special: "폼 체인지: 공격/방어 전환"
             },
             {
-                name: "가디안", number: "798", types: ["강철", "페어리"], tier: "S",
+                name: "가디안", number: "798", types: ["강철", "페어리"], tier: "S", usage: 88,
                 stats: { hp: 70, attack: 130, defense: 115, spAttack: 90, spDefense: 115, speed: 75 },
                 evs: { hp: 20, attack: 32, defense: 14, spAttack: 0, spDefense: 0, speed: 0 },
                 abilities: ["페어리오라"], nature: "고집/의젓함",
@@ -675,7 +852,7 @@
                 mega: false
             },
             {
-                name: "루카리오", number: "448", types: ["격투", "강철"], tier: "A",
+                name: "루카리오", number: "448", types: ["격투", "강철"], tier: "A", usage: 85,
                 stats: { hp: 70, attack: 110, defense: 70, spAttack: 115, spDefense: 70, speed: 90 },
                 evs: { hp: 2, attack: 0, defense: 0, spAttack: 32, spDefense: 0, speed: 32 },
                 abilities: ["불굴의마음", "정의의마음(숨)"], nature: "성급/수줍음",
@@ -687,7 +864,7 @@
                 mega: true, megaInfo: "메가 루카리오 - 적응력"
             },
             {
-                name: "팬텀", number: "094", types: ["고스트", "독"], tier: "A",
+                name: "팬텀", number: "094", types: ["고스트", "독"], tier: "A", usage: 82,
                 stats: { hp: 60, attack: 65, defense: 60, spAttack: 130, spDefense: 75, speed: 110 },
                 evs: { hp: 2, attack: 0, defense: 0, spAttack: 32, spDefense: 0, speed: 32 },
                 abilities: ["저주받은바디"], nature: "겁쟁이/수줍음",
@@ -699,7 +876,7 @@
                 mega: true, megaInfo: "메가 팬텀 - 특공 증가"
             },
             {
-                name: "메타그로스", number: "376", types: ["강철", "에스퍼"], tier: "S",
+                name: "메타그로스", number: "376", types: ["강철", "에스퍼"], tier: "S", usage: 90,
                 stats: { hp: 80, attack: 135, defense: 130, spAttack: 95, spDefense: 90, speed: 70 },
                 evs: { hp: 20, attack: 32, defense: 0, spAttack: 0, spDefense: 0, speed: 14 },
                 abilities: ["클리어바디", "라이트메탈(숨)"], nature: "고집/의젓함",
@@ -711,7 +888,7 @@
                 mega: true, megaInfo: "메가 메타그로스 - 단단한발톱"
             },
             {
-                name: "보만다", number: "373", types: ["드래곤", "비행"], tier: "S",
+                name: "보만다", number: "373", types: ["드래곤", "비행"], tier: "S", usage: 93,
                 stats: { hp: 95, attack: 135, defense: 80, spAttack: 110, spDefense: 80, speed: 100 },
                 evs: { hp: 2, attack: 32, defense: 0, spAttack: 0, spDefense: 0, speed: 32 },
                 abilities: ["위협", "자신만만(숨)"], nature: "고집/의젓함",
@@ -723,7 +900,7 @@
                 mega: true, megaInfo: "메가 보만다 - 스카이스킨"
             },
             {
-                name: "드래펄트", number: "887", types: ["드래곤", "고스트"], tier: "S",
+                name: "드래펄트", number: "887", types: ["드래곤", "고스트"], tier: "S", usage: 96,
                 stats: { hp: 88, attack: 120, defense: 75, spAttack: 100, spDefense: 75, speed: 142 },
                 evs: { hp: 2, attack: 32, defense: 0, spAttack: 0, spDefense: 0, speed: 32 },
                 abilities: ["클리어바디", "저격수(숨)"], nature: "고집/명랑",
@@ -735,7 +912,7 @@
                 mega: false
             },
             {
-                name: "에이스번", number: "815", types: ["불꽃"], tier: "S",
+                name: "에이스번", number: "815", types: ["불꽃"], tier: "S", usage: 94,
                 stats: { hp: 80, attack: 116, defense: 75, spAttack: 65, spDefense: 75, speed: 119 },
                 evs: { hp: 2, attack: 32, defense: 0, spAttack: 0, spDefense: 0, speed: 32 },
                 abilities: ["맹화", "리베로(숨)"], nature: "고집/명랑",
@@ -747,7 +924,7 @@
                 mega: false
             },
             {
-                name: "인텔리온", number: "818", types: ["물"], tier: "A",
+                name: "인텔리온", number: "818", types: ["물"], tier: "A", usage: 80,
                 stats: { hp: 70, attack: 85, defense: 65, spAttack: 125, spDefense: 65, speed: 120 },
                 evs: { hp: 2, attack: 0, defense: 0, spAttack: 32, spDefense: 0, speed: 32 },
                 abilities: ["급류", "저격수(숨)"], nature: "겁쟁이/수줍음",
@@ -759,7 +936,7 @@
                 mega: false
             },
             {
-                name: "지라치", number: "385", types: ["강철", "에스퍼"], tier: "S",
+                name: "지라치", number: "385", types: ["강철", "에스퍼"], tier: "S", usage: 87,
                 stats: { hp: 100, attack: 100, defense: 100, spAttack: 100, spDefense: 100, speed: 100 },
                 evs: { hp: 32, attack: 0, defense: 16, spAttack: 0, spDefense: 16, speed: 2 },
                 abilities: ["하늘의은총"], nature: "냉정/신중",
@@ -771,7 +948,7 @@
                 mega: false
             },
             {
-                name: "딱구리", number: "398", types: ["노말", "비행"], tier: "B",
+                name: "딱구리", number: "398", types: ["노말", "비행"], tier: "B", usage: 65,
                 stats: { hp: 85, attack: 120, defense: 70, spAttack: 50, spDefense: 60, speed: 100 },
                 evs: { hp: 2, attack: 32, defense: 0, spAttack: 0, spDefense: 0, speed: 32 },
                 abilities: ["의욕", "무기력(숨)"], nature: "고집/명랑",
@@ -783,7 +960,7 @@
                 mega: false
             },
             {
-                name: "깜까마귀", number: "430", types: ["악", "비행"], tier: "A",
+                name: "깜까마귀", number: "430", types: ["악", "비행"], tier: "A", usage: 75,
                 stats: { hp: 100, attack: 125, defense: 52, spAttack: 105, spDefense: 52, speed: 71 },
                 evs: { hp: 32, attack: 32, defense: 0, spAttack: 0, spDefense: 0, speed: 0 },
                 abilities: ["불면", "자신만만(숨)"], nature: "고집/의젓함",
@@ -797,21 +974,21 @@
         ];
 
         const itemsData = [
-            { name: "구애머리띠", effect: "공격 1.5배, 첫 기술만 사용 가능", usage: "매우 높음", category: "공격형", recommend: "물리 어태커" },
-            { name: "구애스카프", effect: "스피드 1.5배, 첫 기술만 사용 가능", usage: "매우 높음", category: "속도형", recommend: "선공 어태커" },
-            { name: "구애안경", effect: "특공 1.5배, 첫 기술만 사용 가능", usage: "매우 높음", category: "공격형", recommend: "특수 어태커" },
-            { name: "기합의띠", effect: "HP 가득 시 일격기 무효", usage: "매우 높음", category: "생존형", recommend: "유리몸 어태커" },
-            { name: "약점보험", effect: "약점 공격 받으면 공격/특공 2단계 상승", usage: "높음", category: "역전형", recommend: "약점 많은 포켓몬" },
-            { name: "목숨의구슬", effect: "기술 위력 1.3배, 매턴 HP 10% 감소", usage: "높음", category: "공격형", recommend: "고화력 어태커" },
-            { name: "돌격조끼", effect: "특방 1.5배, 변화기 사용 불가", usage: "매우 높음", category: "방어형", recommend: "물리 어태커" },
-            { name: "진화의휘석", effect: "방어/특방 1.5배", usage: "보통", category: "방어형", recommend: "미진화 포켓몬" },
-            { name: "식탁보", effect: "HP 1/16 회복", usage: "높음", category: "회복형", recommend: "내구형 포켓몬" },
-            { name: "자석", effect: "전기 기술 위력 1.2배", usage: "보통", category: "타입강화", recommend: "전기 타입" },
-            { name: "나무열매", effect: "HP 25% 이하 시 HP 1/3 회복", usage: "매우 높음", category: "회복형", recommend: "모든 포켓몬" },
-            { name: "흰색허브", effect: "능력 하락 시 원래대로", usage: "높음", category: "보조형", recommend: "자가 디버프 기술 사용" },
-            { name: "풍선", effect: "땅 타입 기술 무효 (피격 시 터짐)", usage: "높음", category: "방어형", recommend: "땅 약점 포켓몬" },
-            { name: "안전모", effect: "급소 맞지 않음", usage: "보통", category: "방어형", recommend: "내구형 포켓몬" },
-            { name: "빛의점토", effect: "벽 기술 효과 8턴 지속", usage: "높음", category: "보조형", recommend: "서포터" }
+            { name: "구애머리띠", effect: "공격 1.5배, 첫 기술만 사용 가능", usage: 96, category: "공격형", recommend: "물리 어태커" },
+            { name: "구애스카프", effect: "스피드 1.5배, 첫 기술만 사용 가능", usage: 98, category: "속도형", recommend: "선공 어태커" },
+            { name: "구애안경", effect: "특공 1.5배, 첫 기술만 사용 가능", usage: 94, category: "공격형", recommend: "특수 어태커" },
+            { name: "기합의띠", effect: "HP 가득 시 일격기 무효", usage: 92, category: "생존형", recommend: "유리몸 어태커" },
+            { name: "약점보험", effect: "약점 공격 받으면 공격/특공 2단계 상승", usage: 85, category: "역전형", recommend: "약점 많은 포켓몬" },
+            { name: "목숨의구슬", effect: "기술 위력 1.3배, 매턴 HP 10% 감소", usage: 90, category: "공격형", recommend: "고화력 어태커" },
+            { name: "돌격조끼", effect: "특방 1.5배, 변화기 사용 불가", usage: 88, category: "방어형", recommend: "물리 어태커" },
+            { name: "진화의휘석", effect: "방어/특방 1.5배", usage: 65, category: "방어형", recommend: "미진화 포켓몬" },
+            { name: "식탁보", effect: "HP 1/16 회복", usage: 82, category: "회복형", recommend: "내구형 포켓몬" },
+            { name: "자석", effect: "전기 기술 위력 1.2배", usage: 58, category: "타입강화", recommend: "전기 타입" },
+            { name: "나무열매", effect: "HP 25% 이하 시 HP 1/3 회복", usage: 87, category: "회복형", recommend: "모든 포켓몬" },
+            { name: "흰색허브", effect: "능력 하락 시 원래대로", usage: 74, category: "보조형", recommend: "자가 디버프 기술 사용" },
+            { name: "풍선", effect: "땅 타입 기술 무효 (피격 시 터짐)", usage: 79, category: "방어형", recommend: "땅 약점 포켓몬" },
+            { name: "안전모", effect: "급소 맞지 않음", usage: 62, category: "방어형", recommend: "내구형 포켓몬" },
+            { name: "빛의점토", effect: "벽 기술 효과 8턴 지속", usage: 71, category: "보조형", recommend: "서포터" }
         ];
 
         const megaEvolutions = [
@@ -943,13 +1120,26 @@
                             <span class="pokemon-name">${pokemon.name}</span>
                             <span class="pokemon-number">#${pokemon.number}</span>
                         </div>
+                        <div style="text-align: center; margin: 8px 0;">
+                            <span style="background: ${pokemon.usage >= 90 ? '#4caf50' : pokemon.usage >= 80 ? '#ff9800' : '#999'}; color: white; padding: 4px 12px; border-radius: 15px; font-size: 0.85em; font-weight: bold;">
+                                사용률 ${pokemon.usage}%
+                            </span>
+                        </div>
                         <div class="type-container">
                             ${pokemon.types.map(type => `<span class="type ${getTypeClass(type)}">${type}</span>`).join('')}
                         </div>
                         <div class="stats-section">${statsHTML}</div>
                         <div class="info-section">
                             <h3>특성</h3>
-                            ${pokemon.abilities.map(ability => `<span class="ability-badge">${ability}</span>`).join('')}
+                            ${pokemon.abilities.map(ability => {
+                                const info = abilityInfo[ability];
+                                const usageColor = info && info.usage >= 90 ? '#4caf50' : info && info.usage >= 80 ? '#ff9800' : '#999';
+                                const usageText = info ? `${info.usage}%` : '';
+                                return `<span class="ability-badge clickable" onclick="showInfo('ability', '${ability}')" style="position: relative;">
+                                    ${ability}
+                                    ${usageText ? `<span style="position: absolute; top: -8px; right: -8px; background: ${usageColor}; color: white; padding: 2px 5px; border-radius: 8px; font-size: 0.7em;">${usageText}</span>` : ''}
+                                </span>`;
+                            }).join('')}
                         </div>
                         <div class="info-section">
                             <h3>추천 세팅</h3>
@@ -957,12 +1147,28 @@
                             <div class="ev-spread"><strong>능력 포인트:</strong> ${pokemon.evSpread}</div>
                         </div>
                         <div class="info-section">
-                            <h3>자주 사용하는 기술</h3>
-                            ${pokemon.moves.map(move => `<span class="move">${move}</span>`).join('')}
+                            <h3>많이 사용하는 기술</h3>
+                            ${pokemon.moves.map(move => {
+                                const info = moveInfo[move];
+                                const usageColor = info && info.usage >= 90 ? '#4caf50' : info && info.usage >= 80 ? '#ff9800' : '#999';
+                                const usageText = info ? `${info.usage}%` : '';
+                                return `<span class="move clickable" onclick="showInfo('move', '${move}')" style="position: relative;">
+                                    ${move}
+                                    ${usageText ? `<span style="position: absolute; top: -8px; right: -8px; background: ${usageColor}; color: white; padding: 2px 5px; border-radius: 8px; font-size: 0.7em;">${usageText}</span>` : ''}
+                                </span>`;
+                            }).join('')}
                         </div>
                         <div class="info-section">
                             <h3>많이 사용하는 도구</h3>
-                            ${pokemon.items.map(item => `<span class="item-badge">${item}</span>`).join('')}
+                            ${pokemon.items.map(item => {
+                                const info = itemInfo[item];
+                                const usageColor = info && info.usage >= 90 ? '#4caf50' : info && info.usage >= 80 ? '#ff9800' : '#999';
+                                const usageText = info ? `${info.usage}%` : '';
+                                return `<span class="item-badge clickable" onclick="showInfo('item', '${item}')" style="position: relative;">
+                                    ${item}
+                                    ${usageText ? `<span style="position: absolute; top: -8px; right: -8px; background: ${usageColor}; color: white; padding: 2px 5px; border-radius: 8px; font-size: 0.7em;">${usageText}</span>` : ''}
+                                </span>`;
+                            }).join('')}
                         </div>
                         <div class="info-section">
                             <h3>약점</h3>
@@ -1033,14 +1239,20 @@
             `;
         }
 
+        let currentItemsData = [...itemsData];
+
         function initItemsList() {
             const itemsList = document.getElementById('itemsList');
-            itemsList.innerHTML = itemsData.map(item => `
+            itemsList.innerHTML = currentItemsData.map(item => `
                 <div class="item-card">
-                    <div class="item-name">${item.name}</div>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div class="item-name">${item.name}</div>
+                        <span style="background: ${item.usage >= 90 ? '#4caf50' : item.usage >= 80 ? '#ff9800' : '#999'}; color: white; padding: 4px 10px; border-radius: 12px; font-size: 0.8em; font-weight: bold;">
+                            사용률 ${item.usage}%
+                        </span>
+                    </div>
                     <div class="item-badges">
                         <span class="badge badge-category">${item.category}</span>
-                        <span class="badge ${item.usage === '매우 높음' ? 'badge-high' : item.usage === '높음' ? 'badge-medium' : 'badge-low'}">${item.usage}</span>
                     </div>
                     <div style="margin: 8px 0; font-size: 0.9em; color: #333;">
                         <strong>효과:</strong> ${item.effect}
@@ -1050,6 +1262,17 @@
                     </div>
                 </div>
             `).join('');
+        }
+
+        function sortItems(order) {
+            if (order === 'desc') {
+                currentItemsData.sort((a, b) => b.usage - a.usage);
+            } else if (order === 'asc') {
+                currentItemsData.sort((a, b) => a.usage - b.usage);
+            } else {
+                currentItemsData = [...itemsData];
+            }
+            initItemsList();
         }
 
         function initMegaList() {
@@ -1073,13 +1296,11 @@
                 }).join('');
 
                 return `
-                    <div class="pokemon-card" style="padding-top: 20px;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                            <div>
-                                <div class="pokemon-name" style="font-size: 1.3em;">${mega.name}</div>
-                                <div style="color: #999; font-size: 0.85em; margin-top: 3px;">진화 전: ${mega.original}</div>
-                            </div>
-                            <span class="tier-badge tier-${mega.tier.toLowerCase()}" style="position: static;">Tier ${mega.tier}</span>
+                    <div class="pokemon-card">
+                        <span class="tier-badge tier-${mega.tier.toLowerCase()}">Tier ${mega.tier}</span>
+                        <div class="pokemon-header">
+                            <span class="pokemon-name">${mega.name}</span>
+                            <span class="pokemon-number" style="font-size: 0.85em;">진화 전: ${mega.original}</span>
                         </div>
                         <div class="type-container">
                             ${mega.types.map(type => `<span class="type ${getTypeClass(type)}">${type}</span>`).join('')}
@@ -1128,11 +1349,88 @@
             document.getElementById('calcResult').style.display = 'block';
         }
 
+        function sortByUsage(order) {
+            if (order === 'desc') {
+                filteredData.sort((a, b) => b.usage - a.usage);
+            } else {
+                filteredData.sort((a, b) => a.usage - b.usage);
+            }
+            renderPokemon(filteredData);
+        }
+
+        function sortByDefault() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const activeFilter = document.querySelector('.filter-btn.active').dataset.type;
+            
+            filteredData = pokemonData.filter(pokemon => pokemon.name.toLowerCase().includes(searchTerm));
+            
+            if (activeFilter !== 'all') {
+                filteredData = filteredData.filter(p => p.types.includes(activeFilter));
+            }
+            
+            renderPokemon(filteredData);
+        }
+
+        function showInfo(type, name) {
+            const modal = document.getElementById('infoModal');
+            const title = document.getElementById('modalTitle');
+            const description = document.getElementById('modalDescription');
+            const meta = document.getElementById('modalMeta');
+
+            if (type === 'ability') {
+                const info = abilityInfo[name];
+                if (info) {
+                    title.textContent = name;
+                    description.textContent = info.description;
+                    meta.innerHTML = `
+                        <div><strong>효과:</strong> ${info.effect}</div>
+                        <div style="margin-top: 8px;"><strong>사용률:</strong> <span style="background: ${info.usage >= 90 ? '#4caf50' : info.usage >= 80 ? '#ff9800' : '#999'}; color: white; padding: 3px 8px; border-radius: 10px;">${info.usage}%</span></div>
+                    `;
+                }
+            } else if (type === 'move') {
+                const info = moveInfo[name];
+                if (info) {
+                    title.textContent = name;
+                    description.textContent = info.description;
+                    meta.innerHTML = `
+                        <div><strong>타입:</strong> <span class="type ${getTypeClass(info.type)}">${info.type}</span></div>
+                        <div style="margin-top: 5px;"><strong>위력:</strong> ${info.power} | <strong>명중:</strong> ${info.accuracy} | <strong>PP:</strong> ${info.pp}</div>
+                        <div style="margin-top: 5px;"><strong>효과:</strong> ${info.effect}</div>
+                        <div style="margin-top: 8px;"><strong>사용률:</strong> <span style="background: ${info.usage >= 90 ? '#4caf50' : info.usage >= 80 ? '#ff9800' : '#999'}; color: white; padding: 3px 8px; border-radius: 10px;">${info.usage}%</span></div>
+                    `;
+                }
+            } else if (type === 'item') {
+                const info = itemInfo[name];
+                if (info) {
+                    title.textContent = name;
+                    description.textContent = info.description;
+                    meta.innerHTML = `
+                        <div><strong>사용률:</strong> <span style="background: ${info.usage >= 90 ? '#4caf50' : info.usage >= 80 ? '#ff9800' : '#999'}; color: white; padding: 3px 8px; border-radius: 10px;">${info.usage}%</span></div>
+                        <div style="margin-top: 5px;"><strong>추천:</strong> ${info.recommend}</div>
+                    `;
+                }
+            }
+
+            modal.style.display = 'block';
+        }
+
+        const modal = document.getElementById('infoModal');
+        const closeBtn = document.querySelector('.close');
+
+        closeBtn.onclick = function() {
+            modal.style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+
         renderPokemon(pokemonData);
         initTypeChart();
         initItemsList();
         initMegaList();
-        initTierList();
     </script>
 </body>
 </html>

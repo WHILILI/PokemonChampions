@@ -2,138 +2,211 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>포켓몬 챔피언스 배틀 가이드</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
             font-family: 'Malgun Gothic', sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            padding: 20px;
+            padding: 10px;
+            padding-bottom: 80px;
         }
 
         .container {
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
         }
 
         header {
             background: white;
-            padding: 30px;
+            padding: 20px;
             border-radius: 15px;
             box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-            margin-bottom: 30px;
+            margin-bottom: 15px;
             text-align: center;
         }
 
         h1 {
             color: #667eea;
-            font-size: 2.5em;
-            margin-bottom: 10px;
+            font-size: 1.8em;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            color: #999;
+            font-size: 0.9em;
+        }
+
+        .tab-container {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            margin-bottom: 15px;
+            position: sticky;
+            top: 10px;
+            z-index: 100;
+        }
+
+        .tabs {
+            display: flex;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+
+        .tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .tab {
+            flex: 1;
+            min-width: 100px;
+            padding: 15px 10px;
+            text-align: center;
+            background: white;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: bold;
+            color: #999;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+            white-space: nowrap;
+        }
+
+        .tab.active {
+            color: #667eea;
+            border-bottom: 3px solid #667eea;
+            background: #f8f9ff;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .search-box {
             background: white;
-            padding: 25px;
+            padding: 15px;
             border-radius: 15px;
             box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-            margin-bottom: 30px;
+            margin-bottom: 15px;
         }
 
         .search-input {
             width: 100%;
-            padding: 15px;
-            font-size: 1.1em;
+            padding: 12px 15px;
+            font-size: 1em;
             border: 2px solid #667eea;
-            border-radius: 10px;
+            border-radius: 25px;
             outline: none;
         }
 
-        .search-input:focus {
-            border-color: #f5576c;
-        }
-
         .filter-buttons {
-            margin-top: 15px;
+            margin-top: 12px;
             display: flex;
-            gap: 10px;
+            gap: 8px;
             flex-wrap: wrap;
+            justify-content: center;
         }
 
         .filter-btn {
-            padding: 8px 20px;
+            padding: 8px 16px;
             border: none;
             border-radius: 20px;
             cursor: pointer;
-            font-size: 0.9em;
+            font-size: 0.85em;
             transition: all 0.3s;
+            font-weight: bold;
         }
 
         .filter-btn.active {
-            transform: scale(1.1);
+            transform: scale(1.05);
             box-shadow: 0 3px 10px rgba(0,0,0,0.3);
         }
 
         .pokemon-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
         }
 
         .pokemon-card {
             background: white;
             border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            transition: transform 0.3s;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.15);
             position: relative;
-            padding-top: 50px;
+            padding-top: 40px;
         }
 
-        .pokemon-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        .tier-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-weight: bold;
+            color: white;
+            font-size: 0.75em;
+            z-index: 10;
         }
+
+        .tier-s { background: #d32f2f; }
+        .tier-a { background: #f57c00; }
+        .tier-b { background: #fbc02d; color: #333; }
 
         .pokemon-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
-            border-bottom: 3px solid #667eea;
-            padding-bottom: 10px;
+            margin-bottom: 12px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 8px;
         }
 
         .pokemon-name {
-            font-size: 1.8em;
+            font-size: 1.5em;
             color: #667eea;
             font-weight: bold;
         }
 
         .pokemon-number {
             color: #999;
-            font-size: 1.2em;
+            font-size: 1em;
         }
 
         .type-container {
-            margin: 15px 0;
+            margin: 12px 0;
         }
 
         .type {
             display: inline-block;
-            padding: 6px 16px;
-            border-radius: 20px;
+            padding: 5px 12px;
+            border-radius: 15px;
             margin: 3px;
             color: white;
             font-weight: bold;
-            font-size: 0.9em;
+            font-size: 0.8em;
         }
 
         .type.normal { background: #A8A878; }
@@ -156,26 +229,26 @@
         .type.fairy { background: #EE99AC; }
 
         .stats-section {
-            margin: 15px 0;
+            margin: 12px 0;
         }
 
         .stat-row {
             display: flex;
             align-items: center;
-            margin: 8px 0;
+            margin: 6px 0;
         }
 
         .stat-name {
-            width: 80px;
+            width: 55px;
             font-weight: bold;
             color: #666;
-            font-size: 0.9em;
+            font-size: 0.8em;
         }
 
         .stat-bar-container {
             flex: 1;
             background: #f0f0f0;
-            height: 20px;
+            height: 18px;
             border-radius: 10px;
             overflow: hidden;
             position: relative;
@@ -189,217 +262,253 @@
 
         .stat-value {
             position: absolute;
-            right: 8px;
+            right: 6px;
             top: 50%;
             transform: translateY(-50%);
-            font-size: 0.85em;
+            font-size: 0.75em;
             font-weight: bold;
             color: #333;
         }
 
         .info-section {
-            margin: 15px 0;
-            padding: 15px;
+            margin: 12px 0;
+            padding: 12px;
             background: #f8f9fa;
             border-radius: 10px;
         }
 
         .info-section h3 {
             color: #667eea;
-            margin-bottom: 10px;
-            font-size: 1.1em;
-        }
-
-        .info-item {
-            margin: 8px 0;
-            line-height: 1.6;
-        }
-
-        .info-label {
-            font-weight: bold;
-            color: #555;
-            display: inline-block;
-            min-width: 100px;
+            margin-bottom: 8px;
+            font-size: 1em;
         }
 
         .ability-badge {
             display: inline-block;
             background: #764ba2;
             color: white;
-            padding: 4px 12px;
-            border-radius: 15px;
+            padding: 4px 10px;
+            border-radius: 12px;
             margin: 3px;
-            font-size: 0.85em;
+            font-size: 0.8em;
         }
 
         .move {
             display: inline-block;
             background: #f5576c;
             color: white;
-            padding: 6px 14px;
-            border-radius: 15px;
-            margin: 4px;
-            font-size: 0.9em;
+            padding: 5px 12px;
+            border-radius: 12px;
+            margin: 3px;
+            font-size: 0.8em;
         }
 
         .weakness, .resistance {
             display: inline-block;
-            padding: 5px 12px;
-            border-radius: 15px;
+            padding: 4px 10px;
+            border-radius: 12px;
             margin: 3px;
-            font-size: 0.85em;
+            font-size: 0.75em;
         }
 
         .weakness {
             background: #ffebee;
             color: #c62828;
-            border: 1px solid #c62828;
+            border: 1px solid #ef9a9a;
         }
 
         .resistance {
             background: #e8f5e9;
             color: #2e7d32;
-            border: 1px solid #2e7d32;
+            border: 1px solid #a5d6a7;
+        }
+
+        .ev-spread {
+            background: #fff3e0;
+            padding: 10px;
+            border-radius: 8px;
+            border-left: 3px solid #ff9800;
+            margin: 8px 0;
+            font-size: 0.85em;
         }
 
         .mega-badge {
             background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
             color: white;
-            padding: 8px 16px;
-            border-radius: 20px;
+            padding: 8px 14px;
+            border-radius: 15px;
             font-weight: bold;
             display: inline-block;
-            margin-top: 10px;
-        }
-
-        .ev-spread {
-            background: #fff3e0;
-            padding: 12px;
-            border-radius: 8px;
-            border-left: 4px solid #ff9800;
-            margin: 10px 0;
-        }
-
-        .tier-badge {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-weight: bold;
-            color: white;
+            margin-top: 8px;
             font-size: 0.85em;
-            z-index: 10;
         }
 
-        .tier-s { background: #d32f2f; }
-        .tier-a { background: #f57c00; }
-        .tier-b { background: #fbc02d; color: #333; }
-
-        .no-results {
-            text-align: center;
-            padding: 60px 20px;
+        .type-chart {
             background: white;
             border-radius: 15px;
-            color: #999;
+            padding: 15px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+            margin-bottom: 15px;
+        }
+
+        .type-chart h2 {
+            color: #667eea;
+            margin-bottom: 15px;
             font-size: 1.3em;
         }
 
-        @media (max-width: 768px) {
+        .type-selector {
+            margin-bottom: 15px;
+        }
+
+        .type-btn {
+            padding: 8px 14px;
+            margin: 4px;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            color: white;
+            font-weight: bold;
+            font-size: 0.85em;
+        }
+
+        .effectiveness {
+            margin: 15px 0;
+        }
+
+        .effectiveness h3 {
+            color: #555;
+            font-size: 1.1em;
+            margin-bottom: 10px;
+        }
+
+        .calc-section {
+            background: white;
+            border-radius: 15px;
+            padding: 15px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+            margin-bottom: 15px;
+        }
+
+        .calc-input {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 0.95em;
+        }
+
+        .calc-result {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+
+        .tier-list {
+            background: white;
+            border-radius: 15px;
+            padding: 15px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+            margin-bottom: 15px;
+        }
+
+        .tier-group {
+            margin-bottom: 15px;
+        }
+
+        .tier-title {
+            font-weight: bold;
+            padding: 8px 12px;
+            border-radius: 10px;
+            color: white;
+            margin-bottom: 10px;
+        }
+
+        .tier-pokemon {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .tier-item {
+            background: #f0f0f0;
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-size: 0.9em;
+        }
+
+        .move-list {
+            background: white;
+            border-radius: 15px;
+            padding: 15px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+            margin-bottom: 15px;
+        }
+
+        .move-item {
+            background: #f8f9fa;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .move-name {
+            font-weight: bold;
+            color: #667eea;
+            font-size: 1.05em;
+            margin-bottom: 5px;
+        }
+
+        .move-stats {
+            display: flex;
+            gap: 15px;
+            margin: 5px 0;
+            font-size: 0.85em;
+        }
+
+        .move-stat {
+            color: #666;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 40px 20px;
+            background: white;
+            border-radius: 15px;
+            color: #999;
+            font-size: 1.1em;
+        }
+
+        @media (min-width: 768px) {
             body {
-                padding: 10px;
+                padding: 20px;
             }
 
-            header h1 {
-                font-size: 1.8em;
-            }
-
-            header {
-                padding: 20px 15px;
+            h1 {
+                font-size: 2.5em;
             }
 
             .pokemon-grid {
-                grid-template-columns: 1fr;
-                gap: 15px;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
             }
 
-            .pokemon-card {
+            .tab {
+                font-size: 1em;
+                padding: 18px 15px;
+            }
+
+            .search-box, .type-chart, .calc-section, .tier-list, .move-list {
                 padding: 20px;
-                padding-top: 45px;
-            }
-
-            .pokemon-name {
-                font-size: 1.5em;
-            }
-
-            .pokemon-number {
-                font-size: 1em;
-            }
-
-            .search-box {
-                padding: 15px;
-            }
-
-            .filter-buttons {
-                justify-content: center;
-            }
-
-            .filter-btn {
-                font-size: 0.85em;
-                padding: 6px 14px;
-            }
-
-            .stat-name {
-                width: 60px;
-                font-size: 0.8em;
-            }
-
-            .stat-value {
-                font-size: 0.75em;
-            }
-
-            .info-section h3 {
-                font-size: 1em;
-            }
-
-            .move, .ability-badge, .type {
-                font-size: 0.8em;
-                padding: 5px 10px;
-            }
-
-            .tier-badge {
-                font-size: 0.75em;
-                padding: 5px 10px;
-                top: 10px;
-                right: 10px;
             }
         }
 
-        @media (max-width: 480px) {
-            header h1 {
-                font-size: 1.5em;
-            }
-
-            .pokemon-name {
-                font-size: 1.3em;
-            }
-
-            .search-input {
-                font-size: 1em;
-                padding: 12px;
-            }
-
-            .filter-btn {
-                font-size: 0.75em;
-                padding: 5px 10px;
-            }
-
-            .stat-row {
-                margin: 5px 0;
-            }
-
-            .stat-bar-container {
-                height: 18px;
+        @media (min-width: 1024px) {
+            .pokemon-grid {
+                grid-template-columns: repeat(3, 1fr);
             }
         }
     </style>
@@ -407,98 +516,133 @@
 <body>
     <div class="container">
         <header>
-            <h1>⚔️ 포켓몬 챔피언스 배틀 가이드</h1>
-            <p style="color: #666; margin-top: 10px;">실전 배틀 필수 정보</p>
+            <h1>⚔️ 포켓몬 챔피언스</h1>
+            <p class="subtitle">실전 배틀 가이드</p>
         </header>
 
-        <div class="search-box">
-            <input type="text" id="searchInput" class="search-input" placeholder="포켓몬 이름을 검색하세요... (예: 리자몽, 개굴닌자)">
-            <div class="filter-buttons">
-                <button class="filter-btn active" data-type="all" style="background: #667eea; color: white;">전체</button>
-                <button class="filter-btn type fire" data-type="불꽃">불꽃</button>
-                <button class="filter-btn type water" data-type="물">물</button>
-                <button class="filter-btn type grass" data-type="풀">풀</button>
-                <button class="filter-btn type electric" data-type="전기">전기</button>
-                <button class="filter-btn type dragon" data-type="드래곤">드래곤</button>
-                <button class="filter-btn type steel" data-type="강철">강철</button>
-                <button class="filter-btn type fairy" data-type="페어리">페어리</button>
-                <button class="filter-btn type psychic" data-type="에스퍼">에스퍼</button>
+        <div class="tab-container">
+            <div class="tabs">
+                <button class="tab active" data-tab="pokemon">포켓몬</button>
+                <button class="tab" data-tab="type">타입상성</button>
+                <button class="tab" data-tab="moves">기술</button>
+                <button class="tab" data-tab="tier">티어</button>
+                <button class="tab" data-tab="calc">계산기</button>
             </div>
         </div>
 
-        <div id="pokemonList" class="pokemon-grid"></div>
-        <div id="noResults" class="no-results" style="display: none;">검색 결과가 없습니다.</div>
+        <div id="pokemon-tab" class="tab-content active">
+            <div class="search-box">
+                <input type="text" id="searchInput" class="search-input" placeholder="포켓몬 검색...">
+                <div class="filter-buttons">
+                    <button class="filter-btn active" data-type="all" style="background: #667eea; color: white;">전체</button>
+                    <button class="filter-btn type fire" data-type="불꽃">불꽃</button>
+                    <button class="filter-btn type water" data-type="물">물</button>
+                    <button class="filter-btn type grass" data-type="풀">풀</button>
+                    <button class="filter-btn type dragon" data-type="드래곤">드래곤</button>
+                    <button class="filter-btn type steel" data-type="강철">강철</button>
+                    <button class="filter-btn type fairy" data-type="페어리">페어리</button>
+                </div>
+            </div>
+            <div id="pokemonList" class="pokemon-grid"></div>
+            <div id="noResults" class="no-results" style="display: none;">검색 결과가 없습니다.</div>
+        </div>
+
+        <div id="type-tab" class="tab-content">
+            <div class="type-chart">
+                <h2>타입 상성표</h2>
+                <div class="type-selector">
+                    <p style="margin-bottom: 10px; color: #666; font-size: 0.9em;">타입을 선택하세요:</p>
+                    <div id="typeButtons"></div>
+                </div>
+                <div id="typeEffectiveness"></div>
+            </div>
+        </div>
+
+        <div id="moves-tab" class="tab-content">
+            <div class="move-list">
+                <h2 style="color: #667eea; margin-bottom: 15px;">추천 기술 목록</h2>
+                <div id="movesList"></div>
+            </div>
+        </div>
+
+        <div id="tier-tab" class="tab-content">
+            <div class="tier-list">
+                <h2 style="color: #667eea; margin-bottom: 15px;">메타 티어 리스트</h2>
+                <div id="tierList"></div>
+            </div>
+        </div>
+
+        <div id="calc-tab" class="tab-content">
+            <div class="calc-section">
+                <h2 style="color: #667eea; margin-bottom: 15px;">능력치 계산기</h2>
+                <label style="display: block; margin: 10px 0; color: #666; font-size: 0.9em;">종족값:</label>
+                <input type="number" id="baseStat" class="calc-input" placeholder="예: 100" value="100">
+                
+                <label style="display: block; margin: 10px 0; color: #666; font-size: 0.9em;">능력 포인트 (최대 32):</label>
+                <input type="number" id="evPoints" class="calc-input" placeholder="0-32" max="32" value="32">
+                
+                <label style="display: block; margin: 10px 0; color: #666; font-size: 0.9em;">성격 보정:</label>
+                <select id="nature" class="calc-input">
+                    <option value="1.1">↑ 증가 (1.1배)</option>
+                    <option value="1.0" selected>- 보통 (1.0배)</option>
+                    <option value="0.9">↓ 감소 (0.9배)</option>
+                </select>
+                
+                <button onclick="calculateStat()" style="width: 100%; padding: 12px; background: #667eea; color: white; border: none; border-radius: 10px; font-size: 1em; font-weight: bold; margin-top: 15px; cursor: pointer;">계산하기</button>
+                
+                <div id="calcResult" class="calc-result" style="display: none;">
+                    <h3 style="color: #667eea; margin-bottom: 10px;">결과</h3>
+                    <p style="font-size: 1.5em; font-weight: bold; color: #333;" id="resultValue"></p>
+                    <p style="color: #666; margin-top: 5px; font-size: 0.9em;">레벨 50 기준</p>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
         const pokemonData = [
             {
-                name: "리자몽",
-                number: "006",
-                types: ["불꽃", "비행"],
-                tier: "S",
+                name: "리자몽", number: "006", types: ["불꽃", "비행"], tier: "S",
                 stats: { hp: 78, attack: 84, defense: 78, spAttack: 109, spDefense: 85, speed: 100 },
-                abilities: ["맹화", "선파워(숨)"],
-                nature: "수줍음/겁쟁이",
+                abilities: ["맹화", "선파워(숨)"], nature: "수줍음/겁쟁이",
                 evSpread: "특공 32 / 스피드 32 / HP 2",
                 moves: ["오버히트", "에어슬래시", "용의파동", "태양광선"],
-                weaknesses: ["물", "전기", "바위"],
-                resistances: ["풀", "격투", "벌레", "강철"],
-                mega: true,
-                megaInfo: "메가 리자몽 X (불꽃/드래곤) / 메가 리자몽 Y (불꽃/비행)"
+                weaknesses: ["물", "전기", "바위"], resistances: ["풀", "격투", "벌레", "강철"],
+                mega: true, megaInfo: "메가 X (불꽃/드래곤) / 메가 Y (불꽃/비행)"
             },
             {
-                name: "개굴닌자",
-                number: "658",
-                types: ["물", "악"],
-                tier: "S",
+                name: "개굴닌자", number: "658", types: ["물", "악"], tier: "S",
                 stats: { hp: 72, attack: 95, defense: 67, spAttack: 103, spDefense: 71, speed: 122 },
-                abilities: ["급류", "변환자재(숨)"],
-                nature: "겁쟁이/수줍음",
+                abilities: ["급류", "변환자재(숨)"], nature: "겁쟁이/수줍음",
                 evSpread: "스피드 32 / 특공 32 / HP 2",
                 moves: ["하이드로펌프", "냉동빔", "악의파동", "풀묶기"],
                 weaknesses: ["전기", "풀", "격투", "벌레", "페어리"],
                 resistances: ["강철", "불꽃", "물", "얼음", "고스트", "악"],
-                mega: true,
-                megaInfo: "메가 개굴닌자 - 스피드 특화형"
+                mega: true, megaInfo: "메가 개굴닌자 - 최고 스피드"
             },
             {
-                name: "망나뇽",
-                number: "149",
-                types: ["드래곤", "비행"],
-                tier: "S",
+                name: "망나뇽", number: "149", types: ["드래곤", "비행"], tier: "S",
                 stats: { hp: 91, attack: 134, defense: 95, spAttack: 100, spDefense: 100, speed: 80 },
-                abilities: ["정신력", "멀티스케일(숨)"],
-                nature: "고집/의젓함",
+                abilities: ["정신력", "멀티스케일(숨)"], nature: "고집/의젓함",
                 evSpread: "공격 32 / HP 20 / 스피드 14",
                 moves: ["역린", "지진", "신속", "불대문자"],
                 weaknesses: ["얼음", "드래곤", "페어리", "바위"],
-                resistances: ["풀", "격투", "벌레", "불꽃", "물"],
-                mega: false
+                resistances: ["풀", "격투", "벌레", "불꽃", "물"], mega: false
             },
             {
-                name: "킬가르도",
-                number: "681",
-                types: ["강철", "고스트"],
-                tier: "A",
+                name: "킬가르도", number: "681", types: ["강철", "고스트"], tier: "A",
                 stats: { hp: 60, attack: 50, defense: 140, spAttack: 50, spDefense: 140, speed: 60 },
-                abilities: ["배틀스위치"],
-                nature: "냉정/용감",
+                abilities: ["배틀스위치"], nature: "냉정/용감",
                 evSpread: "HP 32 / 공격 32 / 특공 2",
                 moves: ["킹실드", "섀도크로", "성스러운칼", "아이언헤드"],
                 weaknesses: ["불꽃", "땅", "고스트", "악"],
                 resistances: ["노말", "풀", "얼음", "비행", "에스퍼", "벌레", "바위", "드래곤", "강철", "페어리", "독"],
-                mega: false,
-                special: "폼 체인지: 공격 시 블레이드폼(공/특공 140), 방어 시 실드폼(방/특방 140)"
+                mega: false, special: "폼 체인지: 공격/방어 전환"
             },
             {
-                name: "가디안",
-                number: "798",
-                types: ["강철", "페어리"],
-                tier: "S",
+                name: "가디안", number: "798", types: ["강철", "페어리"], tier: "S",
                 stats: { hp: 70, attack: 130, defense: 115, spAttack: 90, spDefense: 115, speed: 75 },
-                abilities: ["페어리오라"],
-                nature: "고집/의젓함",
+                abilities: ["페어리오라"], nature: "고집/의젓함",
                 evSpread: "공격 32 / HP 20 / 방어 14",
                 moves: ["문포스", "인파이트", "아이언헤드", "칼춤"],
                 weaknesses: ["불꽃", "땅"],
@@ -506,87 +650,49 @@
                 mega: false
             },
             {
-                name: "루카리오",
-                number: "448",
-                types: ["격투", "강철"],
-                tier: "A",
+                name: "루카리오", number: "448", types: ["격투", "강철"], tier: "A",
                 stats: { hp: 70, attack: 110, defense: 70, spAttack: 115, spDefense: 70, speed: 90 },
-                abilities: ["불굴의마음", "정의의마음(숨)"],
-                nature: "성급/수줍음",
+                abilities: ["불굴의마음", "정의의마음(숨)"], nature: "성급/수줍음",
                 evSpread: "특공 32 / 스피드 32 / HP 2",
                 moves: ["파동탄", "악의파동", "진공파", "용의파동"],
                 weaknesses: ["불꽃", "격투", "땅"],
                 resistances: ["노말", "풀", "얼음", "벌레", "바위", "드래곤", "강철", "악"],
-                mega: true,
-                megaInfo: "메가 루카리오 - 적응력 특성, 공격/특공 대폭 증가"
+                mega: true, megaInfo: "메가 루카리오 - 적응력"
             },
             {
-                name: "팬텀",
-                number: "094",
-                types: ["고스트", "독"],
-                tier: "A",
+                name: "팬텀", number: "094", types: ["고스트", "독"], tier: "A",
                 stats: { hp: 60, attack: 65, defense: 60, spAttack: 130, spDefense: 75, speed: 110 },
-                abilities: ["저주받은바디"],
-                nature: "겁쟁이/수줍음",
+                abilities: ["저주받은바디"], nature: "겁쟁이/수줍음",
                 evSpread: "특공 32 / 스피드 32 / HP 2",
                 moves: ["섀도볼", "슬러지봄", "기합구슬", "10만볼트"],
                 weaknesses: ["고스트", "악", "에스퍼", "땅"],
                 resistances: ["풀", "페어리", "독", "벌레", "노말", "격투"],
-                mega: true,
-                megaInfo: "메가 팬텀 - 특공/특방 대폭 증가"
+                mega: true, megaInfo: "메가 팬텀 - 특공 증가"
             },
             {
-                name: "메타그로스",
-                number: "376",
-                types: ["강철", "에스퍼"],
-                tier: "S",
+                name: "메타그로스", number: "376", types: ["강철", "에스퍼"], tier: "S",
                 stats: { hp: 80, attack: 135, defense: 130, spAttack: 95, spDefense: 90, speed: 70 },
-                abilities: ["클리어바디", "라이트메탈(숨)"],
-                nature: "고집/의젓함",
+                abilities: ["클리어바디", "라이트메탈(숨)"], nature: "고집/의젓함",
                 evSpread: "공격 32 / HP 20 / 스피드 14",
                 moves: ["코멧펀치", "지진", "총알펀치", "사념의박치기"],
                 weaknesses: ["불꽃", "땅", "고스트", "악"],
                 resistances: ["노말", "풀", "얼음", "비행", "바위", "드래곤", "강철", "페어리", "에스퍼"],
-                mega: true,
-                megaInfo: "메가 메타그로스 - 단단한발톱 특성"
+                mega: true, megaInfo: "메가 메타그로스 - 단단한발톱"
             },
             {
-                name: "보만다",
-                number: "373",
-                types: ["드래곤", "비행"],
-                tier: "S",
+                name: "보만다", number: "373", types: ["드래곤", "비행"], tier: "S",
                 stats: { hp: 95, attack: 135, defense: 80, spAttack: 110, spDefense: 80, speed: 100 },
-                abilities: ["위협", "자신만만(숨)"],
-                nature: "고집/의젓함",
+                abilities: ["위협", "자신만만(숨)"], nature: "고집/의젓함",
                 evSpread: "공격 32 / 스피드 32 / HP 2",
                 moves: ["역린", "지진", "스톤에지", "불대문자"],
                 weaknesses: ["얼음", "드래곤", "페어리", "바위"],
                 resistances: ["풀", "격투", "벌레", "불꽃", "물"],
-                mega: true,
-                megaInfo: "메가 보만다 - 스카이스킨 특성"
+                mega: true, megaInfo: "메가 보만다 - 스카이스킨"
             },
             {
-                name: "번치코",
-                number: "815",
-                types: ["불꽃"],
-                tier: "A",
-                stats: { hp: 80, attack: 116, defense: 75, spAttack: 65, spDefense: 75, speed: 119 },
-                abilities: ["맹화", "리베로(숨)"],
-                nature: "고집/명랑",
-                evSpread: "공격 32 / 스피드 32 / HP 2",
-                moves: ["화염볼", "비행무릎차기", "불꽃펀치", "아이언헤드"],
-                weaknesses: ["물", "땅", "바위"],
-                resistances: ["불꽃", "풀", "얼음", "벌레", "강철", "페어리"],
-                mega: false
-            },
-            {
-                name: "드래펄트",
-                number: "887",
-                types: ["드래곤", "고스트"],
-                tier: "S",
+                name: "드래펄트", number: "887", types: ["드래곤", "고스트"], tier: "S",
                 stats: { hp: 88, attack: 120, defense: 75, spAttack: 100, spDefense: 75, speed: 142 },
-                abilities: ["클리어바디", "저격수(숨)"],
-                nature: "고집/명랑",
+                abilities: ["클리어바디", "저격수(숨)"], nature: "고집/명랑",
                 evSpread: "공격 32 / 스피드 32 / HP 2",
                 moves: ["드래곤애로우", "고스트다이브", "불대문자", "강철날개"],
                 weaknesses: ["얼음", "고스트", "악", "드래곤", "페어리"],
@@ -594,13 +700,9 @@
                 mega: false
             },
             {
-                name: "에이스번",
-                number: "815",
-                types: ["불꽃"],
-                tier: "S",
+                name: "에이스번", number: "815", types: ["불꽃"], tier: "S",
                 stats: { hp: 80, attack: 116, defense: 75, spAttack: 65, spDefense: 75, speed: 119 },
-                abilities: ["맹화", "리베로(숨)"],
-                nature: "고집/명랑",
+                abilities: ["맹화", "리베로(숨)"], nature: "고집/명랑",
                 evSpread: "공격 32 / 스피드 32 / HP 2",
                 moves: ["파이어볼", "하이점프킥", "아이언헤드", "카운터"],
                 weaknesses: ["물", "땅", "바위"],
@@ -608,13 +710,9 @@
                 mega: false
             },
             {
-                name: "인텔리온",
-                number: "818",
-                types: ["물"],
-                tier: "A",
+                name: "인텔리온", number: "818", types: ["물"], tier: "A",
                 stats: { hp: 70, attack: 85, defense: 65, spAttack: 125, spDefense: 65, speed: 120 },
-                abilities: ["급류", "저격수(숨)"],
-                nature: "겁쟁이/수줍음",
+                abilities: ["급류", "저격수(숨)"], nature: "겁쟁이/수줍음",
                 evSpread: "특공 32 / 스피드 32 / HP 2",
                 moves: ["하이드로스나이프", "냉동빔", "에어슬래시", "악의파동"],
                 weaknesses: ["전기", "풀"],
@@ -622,28 +720,93 @@
                 mega: false
             },
             {
-                name: "지라치",
-                number: "385",
-                types: ["강철", "에스퍼"],
-                tier: "S",
+                name: "지라치", number: "385", types: ["강철", "에스퍼"], tier: "S",
                 stats: { hp: 100, attack: 100, defense: 100, spAttack: 100, spDefense: 100, speed: 100 },
-                abilities: ["하늘의은총"],
-                nature: "냉정/신중",
+                abilities: ["하늘의은총"], nature: "냉정/신중",
                 evSpread: "HP 32 / 방어 16 / 특방 16 / 스피드 2",
                 moves: ["아이언헤드", "불대문자", "사념의박치기", "트릭"],
                 weaknesses: ["불꽃", "땅", "고스트", "악"],
                 resistances: ["노말", "풀", "얼음", "비행", "바위", "드래곤", "강철", "페어리", "에스퍼", "독"],
                 mega: false
+            },
+            {
+                name: "딱구리", number: "398", types: ["노말", "비행"], tier: "B",
+                stats: { hp: 85, attack: 120, defense: 70, spAttack: 50, spDefense: 60, speed: 100 },
+                abilities: ["의욕", "무기력(숨)"], nature: "고집/명랑",
+                evSpread: "공격 32 / 스피드 32 / HP 2",
+                moves: ["브레이브버드", "더블어택", "유턴", "인파이트"],
+                weaknesses: ["전기", "얼음", "바위"],
+                resistances: ["풀", "벌레", "고스트"],
+                mega: false
+            },
+            {
+                name: "깜까마귀", number: "430", types: ["악", "비행"], tier: "A",
+                stats: { hp: 100, attack: 125, defense: 52, spAttack: 105, spDefense: 52, speed: 71 },
+                abilities: ["불면", "자신만만(숨)"], nature: "고집/의젓함",
+                evSpread: "공격 32 / HP 32",
+                moves: ["브레이브버드", "불의펀치", "깨물어부수기", "칼춤"],
+                weaknesses: ["전기", "얼음", "바위", "페어리"],
+                resistances: ["풀", "고스트", "악"],
+                mega: false
             }
         ];
 
+        const movesData = [
+            { name: "오버히트", type: "불꽃", power: 130, accuracy: 90, pp: 5, effect: "특공 2단계 하락", range: "원거리" },
+            { name: "하이드로펌프", type: "물", power: 110, accuracy: 80, pp: 5, effect: "없음", range: "원거리" },
+            { name: "섀도볼", type: "고스트", power: 80, accuracy: 100, pp: 15, effect: "20% 특방 하락", range: "원거리" },
+            { name: "역린", type: "드래곤", power: 120, accuracy: 100, pp: 10, effect: "2-3턴 공격 후 혼란", range: "근거리" },
+            { name: "지진", type: "땅", power: 100, accuracy: 100, pp: 10, effect: "범위 공격", range: "근거리(광역)" },
+            { name: "파동탄", type: "격투", power: 80, accuracy: "필중", pp: 20, effect: "반드시 명중", range: "원거리" },
+            { name: "냉동빔", type: "얼음", power: 90, accuracy: 100, pp: 10, effect: "10% 얼음", range: "원거리" },
+            { name: "10만볼트", type: "전기", power: 90, accuracy: 100, pp: 15, effect: "10% 마비", range: "원거리" },
+            { name: "에너지볼", type: "풀", power: 90, accuracy: 100, pp: 10, effect: "10% 특방 하락", range: "원거리" },
+            { name: "브레이브버드", type: "비행", power: 120, accuracy: 100, pp: 15, effect: "반동 데미지 33%", range: "근거리" },
+            { name: "인파이트", type: "격투", power: 120, accuracy: 100, pp: 5, effect: "방어/특방 하락", range: "근거리" },
+            { name: "아이언헤드", type: "강철", power: 80, accuracy: 100, pp: 15, effect: "30% 풀죽음", range: "근거리" },
+            { name: "문포스", type: "페어리", power: 95, accuracy: 100, pp: 10, effect: "없음", range: "원거리" },
+            { name: "악의파동", type: "악", power: 80, accuracy: 100, pp: 15, effect: "20% 풀죽음", range: "원거리" },
+            { name: "드래곤애로우", type: "드래곤", power: 50, accuracy: 100, pp: 10, effect: "2회 연속 공격", range: "원거리" }
+        ];
+
+        const typeChart = {
+            "노말": { weak: ["격투"], resist: [], immune: ["고스트"] },
+            "불꽃": { weak: ["물", "땅", "바위"], resist: ["불꽃", "풀", "얼음", "벌레", "강철", "페어리"] },
+            "물": { weak: ["전기", "풀"], resist: ["강철", "불꽃", "물", "얼음"] },
+            "풀": { weak: ["불꽃", "얼음", "독", "비행", "벌레"], resist: ["물", "전기", "풀", "땅"] },
+            "전기": { weak: ["땅"], resist: ["전기", "비행", "강철"] },
+            "얼음": { weak: ["불꽃", "격투", "바위", "강철"], resist: ["얼음"] },
+            "격투": { weak: ["비행", "에스퍼", "페어리"], resist: ["벌레", "바위", "악"] },
+            "독": { weak: ["땅", "에스퍼"], resist: ["풀", "격투", "독", "벌레", "페어리"] },
+            "땅": { weak: ["물", "풀", "얼음"], resist: ["독", "바위"], immune: ["전기"] },
+            "비행": { weak: ["전기", "얼음", "바위"], resist: ["풀", "격투", "벌레"], immune: ["땅"] },
+            "에스퍼": { weak: ["벌레", "고스트", "악"], resist: ["격투", "에스퍼"] },
+            "벌레": { weak: ["불꽃", "비행", "바위"], resist: ["풀", "격투", "땅"] },
+            "바위": { weak: ["물", "풀", "격투", "땅", "강철"], resist: ["노말", "불꽃", "독", "비행"] },
+            "고스트": { weak: ["고스트", "악"], resist: ["독", "벌레"], immune: ["노말", "격투"] },
+            "드래곤": { weak: ["얼음", "드래곤", "페어리"], resist: ["불꽃", "물", "전기", "풀"] },
+            "악": { weak: ["격투", "벌레", "페어리"], resist: ["고스트", "악"], immune: ["에스퍼"] },
+            "강철": { weak: ["불꽃", "격투", "땅"], resist: ["노말", "풀", "얼음", "비행", "에스퍼", "벌레", "바위", "드래곤", "강철", "페어리"], immune: ["독"] },
+            "페어리": { weak: ["독", "강철"], resist: ["격투", "벌레", "악"], immune: ["드래곤"] }
+        };
+
         let filteredData = [...pokemonData];
-        const searchInput = document.getElementById('searchInput');
-        const pokemonList = document.getElementById('pokemonList');
-        const noResults = document.getElementById('noResults');
-        const filterButtons = document.querySelectorAll('.filter-btn');
+        const tabs = document.querySelectorAll('.tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                tabContents.forEach(tc => tc.classList.remove('active'));
+                tab.classList.add('active');
+                document.getElementById(tab.dataset.tab + '-tab').classList.add('active');
+            });
+        });
 
         function renderPokemon(data) {
+            const pokemonList = document.getElementById('pokemonList');
+            const noResults = document.getElementById('noResults');
+
             if (data.length === 0) {
                 pokemonList.style.display = 'none';
                 noResults.style.display = 'block';
@@ -656,14 +819,7 @@
             pokemonList.innerHTML = data.map(pokemon => {
                 const maxStat = 255;
                 const statsHTML = Object.entries(pokemon.stats).map(([key, value]) => {
-                    const statNames = {
-                        hp: 'HP',
-                        attack: '공격',
-                        defense: '방어',
-                        spAttack: '특공',
-                        spDefense: '특방',
-                        speed: '스피드'
-                    };
+                    const statNames = { hp: 'HP', attack: '공격', defense: '방어', spAttack: '특공', spDefense: '특방', speed: '스피드' };
                     const percentage = (value / maxStat) * 100;
                     return `
                         <div class="stat-row">
@@ -676,56 +832,40 @@
                     `;
                 }).join('');
 
-                const tierClass = `tier-${pokemon.tier.toLowerCase()}`;
-                
                 return `
                     <div class="pokemon-card">
-                        <span class="tier-badge ${tierClass}">Tier ${pokemon.tier}</span>
+                        <span class="tier-badge tier-${pokemon.tier.toLowerCase()}">Tier ${pokemon.tier}</span>
                         <div class="pokemon-header">
                             <span class="pokemon-name">${pokemon.name}</span>
                             <span class="pokemon-number">#${pokemon.number}</span>
                         </div>
-                        
                         <div class="type-container">
                             ${pokemon.types.map(type => `<span class="type ${getTypeClass(type)}">${type}</span>`).join('')}
                         </div>
-
-                        <div class="stats-section">
-                            ${statsHTML}
-                        </div>
-
+                        <div class="stats-section">${statsHTML}</div>
                         <div class="info-section">
                             <h3>특성</h3>
                             ${pokemon.abilities.map(ability => `<span class="ability-badge">${ability}</span>`).join('')}
                         </div>
-
                         <div class="info-section">
                             <h3>추천 세팅</h3>
-                            <div class="info-item">
-                                <span class="info-label">성격:</span> ${pokemon.nature}
-                            </div>
-                            <div class="ev-spread">
-                                <strong>능력 포인트:</strong> ${pokemon.evSpread}
-                            </div>
+                            <div style="margin: 5px 0; font-size: 0.85em;"><strong>성격:</strong> ${pokemon.nature}</div>
+                            <div class="ev-spread"><strong>능력 포인트:</strong> ${pokemon.evSpread}</div>
                         </div>
-
                         <div class="info-section">
                             <h3>추천 기술</h3>
                             ${pokemon.moves.map(move => `<span class="move">${move}</span>`).join('')}
                         </div>
-
                         <div class="info-section">
                             <h3>약점</h3>
                             ${pokemon.weaknesses.map(w => `<span class="weakness">${w}</span>`).join('')}
                         </div>
-
                         <div class="info-section">
                             <h3>내성</h3>
                             ${pokemon.resistances.map(r => `<span class="resistance">${r}</span>`).join('')}
                         </div>
-
                         ${pokemon.mega ? `<div class="mega-badge">⭐ ${pokemon.megaInfo}</div>` : ''}
-                        ${pokemon.special ? `<div class="info-section"><strong>특수:</strong> ${pokemon.special}</div>` : ''}
+                        ${pokemon.special ? `<div style="margin-top: 10px; font-size: 0.85em; color: #666;"><strong>특수:</strong> ${pokemon.special}</div>` : ''}
                     </div>
                 `;
             }).join('');
@@ -733,55 +873,114 @@
 
         function getTypeClass(type) {
             const typeMap = {
-                '노말': 'normal',
-                '불꽃': 'fire',
-                '물': 'water',
-                '풀': 'grass',
-                '전기': 'electric',
-                '얼음': 'ice',
-                '격투': 'fighting',
-                '독': 'poison',
-                '땅': 'ground',
-                '비행': 'flying',
-                '에스퍼': 'psychic',
-                '벌레': 'bug',
-                '바위': 'rock',
-                '고스트': 'ghost',
-                '드래곤': 'dragon',
-                '악': 'dark',
-                '강철': 'steel',
-                '페어리': 'fairy'
+                '노말': 'normal', '불꽃': 'fire', '물': 'water', '풀': 'grass', '전기': 'electric',
+                '얼음': 'ice', '격투': 'fighting', '독': 'poison', '땅': 'ground', '비행': 'flying',
+                '에스퍼': 'psychic', '벌레': 'bug', '바위': 'rock', '고스트': 'ghost', '드래곤': 'dragon',
+                '악': 'dark', '강철': 'steel', '페어리': 'fairy'
             };
             return typeMap[type] || 'normal';
         }
 
-        searchInput.addEventListener('input', (e) => {
+        document.getElementById('searchInput').addEventListener('input', (e) => {
             const searchTerm = e.target.value.toLowerCase();
-            filteredData = pokemonData.filter(pokemon => 
-                pokemon.name.toLowerCase().includes(searchTerm)
-            );
+            filteredData = pokemonData.filter(pokemon => pokemon.name.toLowerCase().includes(searchTerm));
             renderPokemon(filteredData);
         });
 
-        filterButtons.forEach(btn => {
+        document.querySelectorAll('.filter-btn').forEach(btn => {
             btn.addEventListener('click', () => {
-                filterButtons.forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
-
                 const filterType = btn.dataset.type;
-                if (filterType === 'all') {
-                    filteredData = [...pokemonData];
-                } else {
-                    filteredData = pokemonData.filter(pokemon => 
-                        pokemon.types.includes(filterType)
-                    );
-                }
+                filteredData = filterType === 'all' ? [...pokemonData] : pokemonData.filter(p => p.types.includes(filterType));
                 renderPokemon(filteredData);
-                searchInput.value = '';
+                document.getElementById('searchInput').value = '';
             });
         });
 
+        function initTypeChart() {
+            const typeButtons = document.getElementById('typeButtons');
+            const types = Object.keys(typeChart);
+            typeButtons.innerHTML = types.map(type => 
+                `<button class="type-btn type ${getTypeClass(type)}" onclick="showTypeEffectiveness('${type}')">${type}</button>`
+            ).join('');
+        }
+
+        function showTypeEffectiveness(type) {
+            const data = typeChart[type];
+            const effectiveness = document.getElementById('typeEffectiveness');
+            effectiveness.innerHTML = `
+                <div class="effectiveness">
+                    <h3>⚠️ 약점 (2배 피해)</h3>
+                    ${data.weak.length ? data.weak.map(t => `<span class="type ${getTypeClass(t)}">${t}</span>`).join('') : '<p style="color: #999;">없음</p>'}
+                </div>
+                <div class="effectiveness">
+                    <h3>🛡️ 내성 (0.5배 피해)</h3>
+                    ${data.resist.length ? data.resist.map(t => `<span class="type ${getTypeClass(t)}">${t}</span>`).join('') : '<p style="color: #999;">없음</p>'}
+                </div>
+                ${data.immune ? `<div class="effectiveness">
+                    <h3>❌ 무효 (0배 피해)</h3>
+                    ${data.immune.map(t => `<span class="type ${getTypeClass(t)}">${t}</span>`).join('')}
+                </div>` : ''}
+            `;
+        }
+
+        function initMovesList() {
+            const movesList = document.getElementById('movesList');
+            movesList.innerHTML = movesData.map(move => `
+                <div class="move-item">
+                    <div class="move-name">${move.name}</div>
+                    <span class="type ${getTypeClass(move.type)}">${move.type}</span>
+                    <div class="move-stats">
+                        <span class="move-stat"><strong>위력:</strong> ${move.power}</span>
+                        <span class="move-stat"><strong>명중:</strong> ${move.accuracy}</span>
+                        <span class="move-stat"><strong>PP:</strong> ${move.pp}</span>
+                    </div>
+                    <div style="margin-top: 5px; font-size: 0.85em; color: #666;">
+                        <strong>효과:</strong> ${move.effect} | <strong>사정거리:</strong> ${move.range}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function initTierList() {
+            const tierList = document.getElementById('tierList');
+            const tiers = {
+                'S': pokemonData.filter(p => p.tier === 'S'),
+                'A': pokemonData.filter(p => p.tier === 'A'),
+                'B': pokemonData.filter(p => p.tier === 'B')
+            };
+
+            tierList.innerHTML = Object.entries(tiers).map(([tier, pokemons]) => `
+                <div class="tier-group">
+                    <div class="tier-title tier-${tier.toLowerCase()}">Tier ${tier}</div>
+                    <div class="tier-pokemon">
+                        ${pokemons.map(p => `<div class="tier-item">${p.name}</div>`).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function calculateStat() {
+            const baseStat = parseInt(document.getElementById('baseStat').value);
+            const evPoints = parseInt(document.getElementById('evPoints').value);
+            const nature = parseFloat(document.getElementById('nature').value);
+
+            if (!baseStat || evPoints < 0 || evPoints > 32) {
+                alert('올바른 값을 입력해주세요.\n능력 포인트는 0-32 사이여야 합니다.');
+                return;
+            }
+
+            const stat = Math.floor(((baseStat * 2 + evPoints) * 50 / 100 + 5) * nature);
+
+            document.getElementById('resultValue').textContent = stat;
+            document.getElementById('calcResult').style.display = 'block';
+        }
+
         renderPokemon(pokemonData);
+        initTypeChart();
+        initMovesList();
+        initTierList();
     </script>
 </body>
 </html>
